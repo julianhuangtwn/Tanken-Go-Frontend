@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif; /* For "Register" */
+  font-size: 60px; /* Adjust size as needed */
+  
+}
+
+p {
+  font-family: 'Open Sans'; /* For "Let's start creating your account" */
+  font-size: 18px; /* Adjust size as needed */
+  color: #555; /* Match the color from your design */
+}
