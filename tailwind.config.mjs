@@ -10,6 +10,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        themePink: "#c92f65",
+        themePinkLight: "#c9406f"
       },
     },
   },
