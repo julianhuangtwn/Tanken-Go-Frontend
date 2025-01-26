@@ -41,13 +41,12 @@ export default function Page() {
 
             if (response.ok) {
                 const data = await response.json();
-
                 const aiMessage = {
                     id: messages.length + 2,
                     type: 'ai',
                     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     // Change this when backend data structure updates
-                    text: data.data,
+                    text: data.data.content,
                 };
                 setMessages((prev) => [...prev, aiMessage]);
             } else {
