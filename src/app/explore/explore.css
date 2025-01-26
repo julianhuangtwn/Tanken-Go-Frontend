@@ -1,0 +1,81 @@
+.exploreContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 80px;
+    background-color: #fff;
+    gap: 20px;
+  }
+  
+  .textSection {
+    flex: 1;
+    max-width: 45%;
+  }
+  
+  .subtitle {
+    font-size: 20px;
+    color: #6c757d;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .title {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+    line-height: 1.3;
+  }
+  
+  .description {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  
+  .askAIButton {
+    padding: 15px 40px;
+    font-size: 18px;
+    border-radius: 50px;
+    border: none;
+    background-color: #d6336c;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .askAIButton:hover {
+    background-color: #b82658;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  }
+  
+  .imageSection {
+    flex: 1;
+    max-width: 55%;
+    text-align: center;
+  }
+  
+  .imageWrapper {
+    width: 400px;
+    height: 400px;
+    background-color: #fce4ec;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .circleImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Makes the image circular */
+  }
+  
