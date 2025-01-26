@@ -1,0 +1,129 @@
+'use client'
+
+import Image from 'next/image'
+import { useState, useEffect, useRef } from 'react';
+
+export default function Page() {
+    //Messages are stored in arrays and only rerender when new messages are added
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState([]);
+    const messageAreaRef = useRef(null);
+
+    //Auto scrolls to the bottom when message is sent and received
+    useEffect(() => {
+        if (messageAreaRef.current) {
+            messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    const handleSend = async () => {
+        //Prevent empty submission
+        if (!input.trim()) {
+            return; 
+        }
+
+        const userMessage = {
+            id: messages.length + 1,
+            type: 'user',
+            text: input.trim(),
+        };
+        setMessages((prev) => [...prev, userMessage]);
+
+        //Clear input field
+        setInput('');
+
+        try {
+            const response = await fetch('http://localhost:8080/v1/ai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: input.trim() }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                const aiMessage = {
+                    id: messages.length + 2,
+                    type: 'ai',
+                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    // Change this when backend data structure updates
+                    text: data.data,
+                };
+                setMessages((prev) => [...prev, aiMessage]);
+            } else {
+                console.error('Failed to fetch response from backend');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    return (
+        <div className="h-screen p-4">
+            <div className="flex flex-col  h-full max-h-full max-w-screen-md rounded-lg bg-themePink">
+                <div ref={messageAreaRef} className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5">
+                
+                {messages.length === 0 && (
+                        <div className="ml-8 m-auto text-white">
+                            <h1 className="text-5xl">Ask Me Anything and Start Planning Your Trip!</h1>
+                            <br></br>
+                            <p className="text-2xl">Try:</p>
+                            <ul>
+                                <li>I have a budget of $2000, what should I do on a three-day trip to [destination]?</li>
+                                <li>I don’t like crowded places, any suggestions for [destination]?</li>
+                                <li>What can I do for a 5 hour layover in [destination]</li>
+                            </ul>
+                        </div>
+                    )}
+                
+                {messages.map((message) => (
+                        <div
+                            key={message.id}
+                            className={`flex max-w-full ${
+                                message.type === 'user' ? 'justify-end' : 'justify-start'
+                            }`}
+                        >
+                            {message.type === 'ai' && (
+                                <div className="relative min-w-12 max-w-12 h-12 mr-2">
+                                    <Image
+                                        src={'/AI Icon.png'}
+                                        alt="AI Icon"
+                                        width={48}
+                                        height={48}
+                                        className="rounded-full object-contain"
+                                    />
+                                </div>
+                            )}
+
+                            <div
+                                className={`break-words p-3 rounded-lg max-w-full ${
+                                    message.type === 'user'
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-gray-300 text-black'
+                                }`}
+                            >
+                                {message.text}
+                            </div>
+                        </div>
+                    ))}
+                    
+                </div>
+                <div className="mx-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Type your message..."
+                        className="flex-grow p-2 border rounded-lg"
+                    />
+                    <button
+                        onClick={handleSend}
+                        className="px-2 py-2 bg-blue-500 text-white rounded-lg"
+                    >
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    )   
+}

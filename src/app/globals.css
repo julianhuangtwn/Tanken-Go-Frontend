@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -128,4 +133,13 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+*::-webkit-scrollbar {
+  width: 1px;
+}
+
+ul {
+  list-style-type: disc; 
+  padding-left: 20px;    
 }

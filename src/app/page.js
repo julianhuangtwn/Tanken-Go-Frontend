@@ -1,4 +1,5 @@
-import Image from 'next/image';
+import { CLIENT_REFERENCE_MANIFEST } from "next/dist/shared/lib/constants";
+import Image from "next/image";
 import styles from '../app/styles/home.css';
 
 export default function Home() {
