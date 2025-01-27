@@ -1,5 +1,6 @@
 import { CLIENT_REFERENCE_MANIFEST } from "next/dist/shared/lib/constants";
 import Image from "next/image";
+import Link from 'next/link'
 import styles from '../app/styles/home.css';
 
 export default function Home() {
@@ -10,7 +11,7 @@ export default function Home() {
         <div className="overlay"></div>
         <Image
           src="/home.png"
-          alt="Hero Background"
+          alt="Hero Background" 
           layout="fill"
           objectFit="cover"
           quality={100}
@@ -19,7 +20,7 @@ export default function Home() {
         <div className="heroContent">
           <h1 className="heroTitle">Tanken-Go</h1>
           <p className="heroSubtitle">Explore more trips for your next trip idea!</p>
-          <button className="heroButton">Start Planning</button>
+          <Link href='/explore'><button className="heroButton">Start Planning</button></Link>
         </div>
       </div>
 

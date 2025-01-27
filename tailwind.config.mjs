@@ -11,8 +11,8 @@ export default {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-        themePink: "#c92f65",
-        themePinkLight: "#c9406f",
+			themePink: "#c92f65",
+			themePinkLight: "#c9406f",
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

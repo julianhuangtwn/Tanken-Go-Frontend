@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import styles from '../explore/explore.css';
+import Link from 'next/link'
 
 export default function Explore() {
   return (
@@ -13,7 +14,7 @@ export default function Explore() {
           Ask our AI for personalized suggestions and uncover must-see attractions. 
           Customize your journey to make every moment unforgettable!
         </p>
-        <button className="askAIButton">Ask AI</button>
+        <Link href="/explore/plan-ai"><button className="askAIButton">Ask AI</button></Link>
       </div>
       <div className="imageSection">
         <div className="imageWrapper">

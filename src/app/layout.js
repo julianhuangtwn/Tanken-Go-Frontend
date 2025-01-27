@@ -1,7 +1,8 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import './styles/navbar.css'
-import './styles/footer.css'
+import './styles/navbar.css';
+import './styles/footer.css';
+import './globals.css';
 
 
 export const metadata = {
@@ -12,9 +13,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body  suppressHydrationWarning 
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Navbar /> {/* Navbar is now above the content */}
+      <body  suppressHydrationWarning>
+        <Navbar /> 
         {children}
         <Footer />
       </body>

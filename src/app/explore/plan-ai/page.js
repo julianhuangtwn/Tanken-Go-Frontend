@@ -53,13 +53,19 @@ export default function Page() {
                 console.error('Failed to fetch response from backend');
             }
         } catch (error) {
+            const aiMessage = {
+                id: messages.length + 2,
+                type: 'ai',
+                text: "The AI tool is not running, please try again later",
+            };
+            setMessages((prev) => [...prev, aiMessage]);
             console.error('Error:', error);
         }
     };
 
     return (
         <div className="h-screen p-4">
-            <div className="flex flex-col  h-full max-h-full max-w-screen-md rounded-lg bg-themePink">
+            <div className="flex flex-col h-full max-h-full max-w-screen-md rounded-lg bg-themePink">
                 <div ref={messageAreaRef} className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5">
                 
                 {messages.length === 0 && (

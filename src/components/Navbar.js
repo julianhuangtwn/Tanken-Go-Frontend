@@ -5,24 +5,22 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
-  const router = useRouter();
-
   return (
     <nav className="navbar">
       <div className="logo">
         <h1>Tanken-Go</h1>
       </div>
       <ul className="nav-links">
-        <li className={router.pathname === '/' ? 'active' : ''}>
+        <li>
           <Link href="/">Home</Link>
         </li>
-        <li className={router.pathname === '/explore' ? 'active' : ''}>
+        <li>
           <Link href="/explore">Explore Trips</Link>
         </li>
-        <li className={router.pathname === '/community' ? 'active' : ''}>
+        <li>
           <Link href="/community">Community</Link>
         </li>
-        <li className={router.pathname === '/contact' ? 'active' : ''}>
+        <li>
           <Link href="/contact">Contact</Link>
         </li>
       </ul>
