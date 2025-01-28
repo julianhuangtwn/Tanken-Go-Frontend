@@ -89,7 +89,7 @@ export function LoginForm({
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
         if (isLoggedIn)
-            push('/dashboard');
+            push('/');
      }, [isLoggedIn]);
 
     // 4. Handle form submission
@@ -98,7 +98,7 @@ export function LoginForm({
         setErrorMessage(null)
         
         try {
-            const response = await fetch(NEXT_PUBLIC_API_URL + "/v1/login", {
+            const response = await fetch(NEXT_PUBLIC_API_URL + "/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -200,9 +200,9 @@ export function LoginForm({
             {/* Sign Up Link */}
             <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
-                Sign up
-                </a>
+                <Link href='/register'>
+                    Sign up
+                </Link>
             </div>
         </CardContent>
       </Card>

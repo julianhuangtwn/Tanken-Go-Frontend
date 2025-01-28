@@ -30,7 +30,7 @@ const Navbar = () => {
       </ul>
       <div className="nav-right">
         <button className="start-button"><Link href="/explore">Start Planning</Link></button>
-        <button className="account-button"><Link href="/account">Account</Link></button>
+        <button className="account-button"><Link href="/login">Login</Link></button>
       </div>
     </nav>
   );
