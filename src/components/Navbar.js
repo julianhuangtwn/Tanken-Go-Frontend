@@ -3,14 +3,18 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { travel } from './ui/fonts'
+
 
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <div className="logo">
-        <h1>Tanken-Go</h1>
-      </div>
-      <ul className="nav-links">
+      <Link href=''>
+        <div className="logo">
+          <h1 className={`${travel.className} antialiased text-6xl`}>Tanken-GO</h1>
+        </div>
+      </Link>
+      <ul className="flex items-center nav-links text-center">
         <li>
           <Link href="/">Home</Link>
         </li>

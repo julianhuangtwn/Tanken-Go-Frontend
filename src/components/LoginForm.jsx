@@ -98,7 +98,7 @@ export function LoginForm({
         setErrorMessage(null)
         
         try {
-            const response = await fetch(NEXT_PUBLIC_API_URL + "/login", {
+            const response = await fetch(NEXT_PUBLIC_API_URL + "/v1/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

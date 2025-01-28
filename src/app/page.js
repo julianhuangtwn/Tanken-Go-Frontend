@@ -2,6 +2,7 @@ import { CLIENT_REFERENCE_MANIFEST } from "next/dist/shared/lib/constants";
 import Image from "next/image";
 import Link from 'next/link'
 import styles from '../app/styles/home.css';
+import { travel } from '../components/ui/fonts'
 
 export default function Home() {
   return (
@@ -12,13 +13,12 @@ export default function Home() {
         <Image
           src="/home.png"
           alt="Hero Background" 
-          layout="fill"
-          objectFit="cover"
+          fill
           quality={100}
-          className="heroImage"
+          className="heroImage opacity-50 object-cover"
         />
         <div className="heroContent">
-          <h1 className="heroTitle">Tanken-Go</h1>
+          <h1 className={`${travel.className} antialiased`}>Tanken-GO</h1>
           <p className="heroSubtitle">Explore more trips for your next trip idea!</p>
           <Link href='/explore'><button className="heroButton">Start Planning</button></Link>
         </div>
