@@ -33,7 +33,6 @@ import {
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
 
-
 // 1. Define the validation schema using Zod
 const formSchema = z.object({
     identifier: z
@@ -89,7 +88,7 @@ export function LoginForm({
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
         if (isLoggedIn)
-            push('/');
+            push('/account');
      }, [isLoggedIn]);
 
     // 4. Handle form submission

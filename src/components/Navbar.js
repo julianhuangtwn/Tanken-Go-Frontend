@@ -9,8 +9,8 @@ import { travel } from './ui/fonts'
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <Link href=''>
-        <div className="logo">
+      <Link href='/'>
+        <div className="flex logo items-center">
           <h1 className={`${travel.className} antialiased text-6xl`}>Tanken-GO</h1>
         </div>
       </Link>
