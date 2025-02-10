@@ -1,5 +1,6 @@
 'use client'
 
+import TripList from '@/components/tripList';
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react';
 
@@ -64,8 +65,9 @@ export default function Page() {
     };
 
     return (
-        <div className="h-screen p-4">
-            <div className="flex flex-col h-full max-h-full max-w-screen-md rounded-lg bg-themePink">
+        <div style={{flex: 1, display: 'flex', flexDirection: 'row'}}>
+        <div className="h-screen p-4" style={{border: "1px solid black", width: "50%"}}>
+            <div className="flex flex-col h-full max-h-full rounded-lg bg-themePink" style={{width: "100%"}}>
                 <div ref={messageAreaRef} className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5">
                 
                 {messages.length === 0 && (
@@ -129,6 +131,8 @@ export default function Page() {
                     </button>
                 </div>
             </div>
+        </div>
+            <TripList/>
         </div>
     )   
 }
