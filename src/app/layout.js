@@ -4,6 +4,7 @@ import './styles/navbar.css';
 import './styles/footer.css';
 import './globals.css';
 
+import Providers from '../components/Providers';
 
 export const metadata = {
   title: 'Next.js',
@@ -14,9 +15,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body  suppressHydrationWarning>
-        <Navbar /> 
-        {children}
-        <Footer />
+        <Providers>
+          <Navbar /> 
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

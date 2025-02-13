@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+
+import { useAtom } from 'jotai';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -32,6 +34,7 @@ import {
 } from "@/components/ui/form"
 
 import { authenticateUser } from '@/lib/authenticate';
+import { userAtom } from '@/lib/userAtom';
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -72,9 +75,10 @@ export function LoginForm({
   ...props
 }) {
     // 2. Set up state flags for the form
+    const [ user, setUser ] = useAtom(userAtom);
     const [ isSubmitting, setIsSubmitting ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState(null);
-    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
+    // const [ isLoggedIn, setIsLoggedIn ] = useState(false);
 
     // 3. Initialize the form
     const form = useForm({
@@ -89,9 +93,9 @@ export function LoginForm({
 
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
-        if (isLoggedIn)
+        if (user.isLoggedIn)
             push('/account');
-     }, [isLoggedIn]);
+     }, [user.isLoggedIn]);
 
     // 4. Handle form submission
     const onSubmit = async (data) => {
@@ -101,7 +105,11 @@ export function LoginForm({
         try {
             const response = await authenticateUser(data.identifier, data.password);
             if (response && response.success) {
-                setIsLoggedIn(true)
+                // Update the user atom
+                setUser({
+                    isLoggedIn: true,
+                    identifier: data.identifier,
+                })
             } else {
                 setErrorMessage("Invalid credentials.")
             }
