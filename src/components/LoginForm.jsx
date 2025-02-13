@@ -31,6 +31,8 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 
+import { authenticateUser } from '@/lib/authenticate';
+
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
 
 // 1. Define the validation schema using Zod
@@ -95,38 +97,21 @@ export function LoginForm({
     const onSubmit = async (data) => {
         setIsSubmitting(true)
         setErrorMessage(null)
-        
+
         try {
-            const response = await fetch(NEXT_PUBLIC_API_URL + "/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            })
-
-            const responseData = await response.json()
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    console.log("Invalid credentials.")
-                    setErrorMessage("Invalid credentials.")
-                } else {
-                    console.error("An unexpected error occurred:", responseData)
-                    setErrorMessage(responseData.message)
-                }
+            const response = await authenticateUser(data.identifier, data.password);
+            if (response && response.success) {
+                setIsLoggedIn(true)
             } else {
-                console.log("Login successful!");
-                // Set this flag to true here to the component will redirect to the dashboard in useEffect
-                setIsLoggedIn(true);
+                setErrorMessage("Invalid credentials.")
             }
-
         } catch (error) {
             console.error("An unexpected error occurred:", error)
             setErrorMessage(error.message)
         } finally {
             setIsSubmitting(false)
         }
+
     }
 
   return (
