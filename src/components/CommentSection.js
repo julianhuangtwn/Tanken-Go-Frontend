@@ -44,18 +44,22 @@ export default function CommentSection({ tripId }) {
 
     useEffect(() => {
         if (tripId) {
-            axios.get(`http://localhost:8080/api/comments/${tripId}`)
-                .then((res) => {
-                    setComments(res.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
-                    if (user) {
-                        const hasCommented = res.data.some(c => c.USERID === user.userId);
-                        setUserHasCommented(hasCommented);
-                    }
-                })
-                .catch((err) => console.error("Error fetching comments:", err));
+            const token = localStorage.getItem("token");
+    
+            axios.get(`https://tanken-go-backend.onrender.com/v1/comments/${tripId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then((res) => {
+                setComments(res.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
+                if (user) {
+                    const hasCommented = res.data.some(c => c.USERID === user.userId);
+                    setUserHasCommented(hasCommented);
+                }
+            })
+            .catch((err) => console.error("Error fetching comments:", err));
         }
     }, [tripId, user]);
-
+    
     const overallRating = comments.length > 0
         ? (comments.reduce((sum, c) => sum + c.RATING, 0) / comments.length).toFixed(1)
         : "No ratings yet";
@@ -74,12 +78,12 @@ export default function CommentSection({ tripId }) {
 
         try {
             await axios.post(
-                "http://localhost:8080/api/comments",
+                "https://tanken-go-backend.onrender.com/v1/comments",
                 { tripId, content, rating },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            axios.get(`http://localhost:8080/api/comments/${tripId}`)
+            axios.get(`https://tanken-go-backend.onrender.com/v1/comments/${tripId}`)
                 .then((res) => {
                     setComments(res.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
                     setUserHasCommented(true);
@@ -103,7 +107,7 @@ export default function CommentSection({ tripId }) {
     
         try {
             const response = await axios.delete(
-                `http://localhost:8080/api/comments/${commentId}`,
+                `https://tanken-go-backend.onrender.com/v1/comments/${commentId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
     
@@ -134,32 +138,36 @@ export default function CommentSection({ tripId }) {
         }
     
         const token = localStorage.getItem("token");
-        if (!user) {
+        if (!token) {
+            console.error("No token found! User might be logged out.");
             setShowLoginModal(true);
             return;
         }
     
-        console.log(`Updating comment: ${editingComment} with rating: ${updatedRating}`); 
-    
+        console.log(`🔹 Sending Update Request - Comment ID: ${editingComment}, Content: ${updatedContent}, Rating: ${updatedRating}`);
+        
         try {
             const response = await axios.put(
-                `http://localhost:8080/api/comments/${editingComment}`,
-                { content: updatedContent, rating: updatedRating},
+                `https://tanken-go-backend.onrender.com/v1/comments/${editingComment}`,
+                { content: updatedContent, rating: updatedRating },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
     
+            console.log("Update Response:", response);
+    
             if (response.status === 200) {
-                const updatedComments = await axios.get(`http://localhost:8080/api/comments/${tripId}`);
-            setComments(updatedComments.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
-            setEditingComment(null);
+                const updatedComments = await axios.get(`https://tanken-go-backend.onrender.com/v1/comments/${tripId}`);
+                setComments(updatedComments.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
+                setEditingComment(null);
             } else {
                 displayError("Failed to update comment.");
             }
         } catch (error) {
-            console.error("Error updating comment:", error);
+            console.error("Error updating comment:", error.response ? error.response.data : error.message);
             displayError(error.response?.data?.error || "Failed to update comment.");
         }
     };
+    
 
     return (
         
