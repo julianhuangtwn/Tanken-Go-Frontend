@@ -1,11 +1,12 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { AuthProvider } from "@/context/AuthContext"; // ✅ Import Auth Context
 import './styles/navbar.css';
 import './styles/footer.css';
 import './globals.css';
 
-import Providers from '@/components/Providers';
 import RouteGuard from '@/components/RouteGuard';
+import JotaiProvider from '@/components/JotaiProvider';
 
 export const metadata = {
   title: 'Next.js',
@@ -14,16 +15,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-      <html lang="en" suppressHydrationWarning>
-        <body  suppressHydrationWarning>
-          <Providers>
-            <RouteGuard>
-                <Navbar /> 
-                {children}
-                <Footer />
-            </RouteGuard>
-          </Providers>
-        </body>
-      </html>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+            <JotaiProvider>
+              <RouteGuard>
+                <AuthProvider> 
+                  <Navbar />
+                    {children}
+                  <Footer />
+                </AuthProvider>
+              </RouteGuard>
+            </JotaiProvider>
+      </body>
+    </html>
   );
 }
