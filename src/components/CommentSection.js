@@ -46,7 +46,7 @@ export default function CommentSection({ tripId }) {
         if (tripId) {
             const token = localStorage.getItem("token");
     
-            axios.get(`https://tanken-go-backend.onrender.com/v1/comments/${tripId}`, {
+            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             .then((res) => {
@@ -78,12 +78,12 @@ export default function CommentSection({ tripId }) {
 
         try {
             await axios.post(
-                "https://tanken-go-backend.onrender.com/v1/comments",
+                `${process.env.NEXT_PUBLIC_API_URL}/v1/comments`,
                 { tripId, content, rating },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            axios.get(`https://tanken-go-backend.onrender.com/v1/comments/${tripId}`)
+            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`)
                 .then((res) => {
                     setComments(res.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
                     setUserHasCommented(true);
@@ -107,7 +107,7 @@ export default function CommentSection({ tripId }) {
     
         try {
             const response = await axios.delete(
-                `https://tanken-go-backend.onrender.com/v1/comments/${commentId}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${commentId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
     
@@ -148,7 +148,7 @@ export default function CommentSection({ tripId }) {
         
         try {
             const response = await axios.put(
-                `https://tanken-go-backend.onrender.com/v1/comments/${editingComment}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${editingComment}`,
                 { content: updatedContent, rating: updatedRating },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -156,7 +156,7 @@ export default function CommentSection({ tripId }) {
             console.log("Update Response:", response);
     
             if (response.status === 200) {
-                const updatedComments = await axios.get(`https://tanken-go-backend.onrender.com/v1/comments/${tripId}`);
+                const updatedComments = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`);
                 setComments(updatedComments.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
                 setEditingComment(null);
             } else {

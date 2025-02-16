@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            axios.get("https://tanken-go-backend.onrender.com/api/auth/me", { headers: { Authorization: `Bearer ${token}` } })
+            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
                 .then((res) => setUser(res.data))
                 .catch(() => setUser(null));
         }
