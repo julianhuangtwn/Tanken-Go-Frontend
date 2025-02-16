@@ -33,7 +33,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 
-import { authenticateUser, readToken } from '@/lib/authenticate';
+import { authenticateUser, readToken, getToken } from '@/lib/authenticate';
 import { userAtom } from '@/lib/userAtom';
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -93,9 +93,24 @@ export function LoginForm({
 
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
-        if (user.isLoggedIn)
-            push('/account');
-     }, [user.isLoggedIn]);
+        // if (user.isLoggedIn) {
+        //     push('/account');
+        // }
+        const storedToken = getToken();
+        if (storedToken) {
+            const tokenData = readToken();
+            setUser({
+                isLoggedIn: true,
+                id: tokenData.id,
+                fullName: tokenData.fullName,
+                email: tokenData.email,
+                phone: tokenData.phone,
+            })
+            push('/account/details');
+        } else {
+            console.log("No token found.")
+        }
+     }, [setUser]);
 
     // 4. Handle form submission
     const onSubmit = async (data) => {
@@ -106,17 +121,14 @@ export function LoginForm({
             const response = await authenticateUser(data.identifier, data.password);
             if (response && response.success) {
                 const tokenData = readToken();
-                console.log("This the token DATA");
-                console.log(tokenData);
-                // Update the user atom
                 setUser({
-                    isLoggedIn: true, 
+                    isLoggedIn: true,
                     id: tokenData.id,
                     fullName: tokenData.fullName,
                     email: tokenData.email,
                     phone: tokenData.phone,
-                });
-
+                })
+                push('/account/details');
             } else {
                 setErrorMessage("Invalid credentials.")
             }

@@ -16,10 +16,8 @@ import { Label } from "@/components/ui/label";
 
 import { userAtom } from "@/lib/userAtom";
 import { useAtom } from "jotai";
-import { readToken } from "@/lib/authenticate";
-
 export default function Page(){
-  const token = readToken();
+  const [user, setUser] = useAtom(userAtom);
 
 
   return (
@@ -29,13 +27,13 @@ export default function Page(){
           <h1 className="text-3xl font-sans font-bold mb-6">Account Details</h1>
           <div className="space-y-2">
             <p>
-              <strong>Name:</strong> {token.fullName}
+              <strong>Name:</strong> {user.fullName}
             </p>
             <p>
-              <strong>Email:</strong> {token.email}
+              <strong>Email:</strong> {user.email}
             </p>
             <p>
-              <strong>Phone:</strong> {token.phone}
+              <strong>Phone:</strong> {user.phone}
             </p>
           </div>
         </div>
@@ -58,7 +56,7 @@ export default function Page(){
                 </Label>
                 <Input
                   id="name"
-                  value={token.fullName}
+                  value={user.fullName}
                   onChange={(e) => setName(e.target.value)}
                   className="col-span-3"
                 />
@@ -69,7 +67,7 @@ export default function Page(){
                 </Label>
                 <Input
                   id="email"
-                  value={token.email}
+                  value={user.email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="col-span-3"
                 />
