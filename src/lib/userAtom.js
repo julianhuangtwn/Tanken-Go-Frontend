@@ -5,5 +5,8 @@ import { atom } from 'jotai'
 // identifier: string | null
 export const userAtom = atom({ 
     isLoggedIn: false, 
-    identifier: null,
+    id: 123,
+    fullName: null,
+    email: null,
+    phone: null,
 })

@@ -33,7 +33,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 
-import { authenticateUser } from '@/lib/authenticate';
+import { authenticateUser, readToken } from '@/lib/authenticate';
 import { userAtom } from '@/lib/userAtom';
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -105,11 +105,18 @@ export function LoginForm({
         try {
             const response = await authenticateUser(data.identifier, data.password);
             if (response && response.success) {
+                const tokenData = readToken();
+                console.log("This the token DATA");
+                console.log(tokenData);
                 // Update the user atom
                 setUser({
-                    isLoggedIn: true,
-                    identifier: data.identifier,
-                })
+                    isLoggedIn: true, 
+                    id: tokenData.id,
+                    fullName: tokenData.fullName,
+                    email: tokenData.email,
+                    phone: tokenData.phone,
+                });
+
             } else {
                 setErrorMessage("Invalid credentials.")
             }

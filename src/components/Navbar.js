@@ -3,7 +3,6 @@
 
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { travel } from './ui/fonts'
 
 // Atom
@@ -18,8 +17,11 @@ const Navbar = () => {
   // Logout function
   const handleLogout = () => {
     setUser({
-      isLoggedIn: false,
-      identifier: null,
+      isLoggedIn: false, 
+      id: null,
+      fullName: null,
+      email: null,
+      phone: null,
     });
     removeToken();
   };
