@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react';
 
+const token = sessionStorage.getItem("token");
+
 export default function Page() {
     //Messages are stored in arrays and only rerender when new messages are added
     const [messages, setMessages] = useState([]);
@@ -29,13 +31,18 @@ export default function Page() {
         };
         setMessages((prev) => [...prev, userMessage]);
 
+        console.log(token)
+
         //Clear input field
         setInput('');
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/ai`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'application/json'
+                 },
                 body: JSON.stringify({ message: input.trim() }),
             });
 
