@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react';
 
-const token = sessionStorage.getItem("token");
+const token = localStorage.getItem("token");
 
 export default function Page() {
     //Messages are stored in arrays and only rerender when new messages are added
