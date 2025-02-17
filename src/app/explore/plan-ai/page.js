@@ -11,6 +11,8 @@ export default function Page() {
     const [input, setInput] = useState([]);
     const messageAreaRef = useRef(null);
 
+    console.log(token)
+
     //Auto scrolls to the bottom when message is sent and received
     useEffect(() => {
         if (messageAreaRef.current) {
@@ -31,7 +33,6 @@ export default function Page() {
         };
         setMessages((prev) => [...prev, userMessage]);
 
-        console.log(token)
 
         //Clear input field
         setInput('');
