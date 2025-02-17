@@ -16,8 +16,6 @@ export default function RouteGuard({ children }) {
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    // on initial load - run auth check
-    console.log(`Initial path: ${router.pathname}`);
     authCheck(pathname);
   }, [pathname]);
 

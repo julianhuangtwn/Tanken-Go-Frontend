@@ -24,7 +24,7 @@ export default function Page(){
     <>
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-3xl font-sans font-bold mb-6">Account Details</h1>
+          <h1 className="text-3xl font-sans font-semibold mb-6">Account Details</h1>
           <div className="space-y-2">
             <p>
               <strong>Name:</strong> {user.fullName}

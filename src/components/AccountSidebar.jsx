@@ -1,6 +1,7 @@
 'use client'
 
 import { Bookmark, CircleUser, LogOut } from "lucide-react"
+import Link from "next/link"
 
 import { 
     Sidebar, 
@@ -24,7 +25,7 @@ const menuItems = [
     },
     {
         title: "Logout",
-        url: "#",
+        url: "/account/logout",
         icon: LogOut,
     },
 ]
@@ -37,10 +38,10 @@ export function AccountSidebar() {
             {menuItems.map((item) =>(
                 <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                        <a href={item.url}>
+                        <Link href={item.url}>
                             <item.icon />
                             <span>{item.title}</span>
-                        </a>
+                        </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             ))}

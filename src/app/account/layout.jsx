@@ -6,7 +6,7 @@ export default function AccountLayout({ children }) {
   return (
       <SidebarProvider>
         <AccountSidebar />
-        <main className="flex flex-col ml-20 mt-20 h-screen">
+        <main className="flex flex-col ml-20 mt-20">
           {children}
         </main>
       </SidebarProvider>
