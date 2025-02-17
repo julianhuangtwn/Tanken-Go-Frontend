@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+import Link from "next/link";
 
 import { userAtom } from "@/lib/userAtom";
 import { useAtom } from "jotai";
@@ -36,6 +37,10 @@ export default function Page(){
               <strong>Phone:</strong> {user.phone}
             </p>
           </div>
+
+          <Link href="/forgot-password">
+            <p className="mt-2 text-sm text-blue-500 underline hover:text-blue-700">Forgot Password</p>
+          </Link>
         </div>
 
         <Dialog>
