@@ -62,7 +62,7 @@ export default function Page(){
 
       if (!response.ok) {
         console.error()
-
+        return;
       }
       const data = await response.json();
       setTrips([...trips, data.trip]);

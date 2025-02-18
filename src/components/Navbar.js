@@ -10,9 +10,12 @@ import { useAtom } from 'jotai';
 import { userAtom } from '@/lib/userAtom';
 import { removeToken } from '@/lib/authenticate';
 
+import { useRouter } from 'next/navigation';
+
 
 const Navbar = () => {
   const [user, setUser] = useAtom(userAtom);
+  const { push } = useRouter();
 
   // Logout function
   const handleLogout = () => {
@@ -24,6 +27,7 @@ const Navbar = () => {
       phone: null,
     });
     removeToken();
+    push('/login');
   };
 
   return (
