@@ -1,7 +1,9 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import CommentSection from "@/components/CommentSection";
+
 
 export default function TripDetailPage() {
   const { tripId } = useParams();
@@ -70,5 +72,7 @@ export default function TripDetailPage() {
         )}
       </div>
     </div>
+    
+
   );
 }

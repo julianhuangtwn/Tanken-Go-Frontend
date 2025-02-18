@@ -15,13 +15,19 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+<<<<<<< HEAD
+    "leaflet": "^1.9.4",
+=======
     "jwt-decode": "^4.0.0",
+>>>>>>> 874e2afa70804f4a95615d9d0ea715678f5e5a46
     "libphonenumber-js": "^1.11.18",
     "lucide-react": "^0.474.0",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
+    "react-icons": "^5.4.0",
+    "react-leaflet": "^5.0.0",
     "react-phone-input-2": "^2.15.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "^3.4.17",
