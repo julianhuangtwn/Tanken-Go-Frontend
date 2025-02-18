@@ -4,11 +4,15 @@ import Image from 'next/image'
 import AiResponse from '@/components/AiResponse';
 import { useState, useEffect, useRef } from 'react';
 
+const token = localStorage.getItem('token');
+
 export default function Page() {
     //Messages are stored in arrays and only rerender when new messages are added
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState([]);
     const messageAreaRef = useRef(null);
+
+    console.log(token);
 
     //Auto scrolls to the bottom when message is sent and received
     useEffect(() => {
@@ -37,7 +41,9 @@ export default function Page() {
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/ai`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: formattedMessages }),
             });
 
