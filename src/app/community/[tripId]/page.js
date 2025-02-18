@@ -18,7 +18,8 @@ export default function TripDetailPage() {
 
     (async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/trips/public/${tripId}`, {
+        const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;    
+        const response = await fetch(`${NEXT_PUBLIC_API_URL}/v1/trips/public/${tripId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
