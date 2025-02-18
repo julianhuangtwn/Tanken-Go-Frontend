@@ -1,14 +1,16 @@
 import React, { useEffect, useState, useMemo } from "react";
-import mockData from "../../mockData/tripList.json";
+import mockData from "../../../mockData/tripList.json";
 import { ChevronRight, CircleMinus } from "lucide-react";
 
 const IMAGE_WIDTH = 300;
 const IMAGE_HEIGHT = 200;
 
-export default function TripList() {
+export default function TripList({setIsMapOpen}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isMapOpen, setIsMapOpen1] = useState(false);
+
 
   useEffect(() => {
     // Fetch data from the backend or use mock data
@@ -61,12 +63,19 @@ export default function TripList() {
     }, {}); // Initial value of acc is an empty object {}
   };
 
+  const handleMapBtn = () => {
+    setIsMapOpen1((prev) => {
+      console.log(!prev);
+      return !prev
+    });
+    setIsMapOpen((prev) => !prev);
+  }
+
   const groupedTrips = useMemo(() => groupByDate(data), [data]);
 
   return (
     <div
       style={{
-        border: "1px solid black",
         width: "50%",
         maxHeight: "100vh",
         justifyContent: "space-between",
@@ -89,6 +98,7 @@ export default function TripList() {
         </div>
         <button
           className="bg-themePink rounded-lg"
+          onClick={handleMapBtn}
           style={{
             marginLeft: "auto",
             marginRight: "20px",
@@ -158,7 +168,7 @@ export default function TripList() {
                         <img
                           src={trip.imageUrl}
                           alt={trip.name}
-                          style={{ width: IMAGE_WIDTH, height:IMAGE_HEIGHT, borderRadius: "5px", objectFit: "contain" }}
+                          style={{ width: IMAGE_WIDTH, height:"auto", borderRadius: "5px", objectFit: "contain" }}
                           
                         />
                       ) : (
