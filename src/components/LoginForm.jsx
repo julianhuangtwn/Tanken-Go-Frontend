@@ -117,7 +117,9 @@ export function LoginForm({
                 }
             } else {
                 console.log("Login successful!");
-                // Set this flag to true here to the component will redirect to the dashboard in useEffect
+
+            localStorage.setItem("token", responseData.token);
+                //flag true here to the component will redirect to the dashboard in useEffect
                 setIsLoggedIn(true);
             }
 

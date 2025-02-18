@@ -12,9 +12,14 @@
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.1",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+<<<<<<< HEAD
     "leaflet": "^1.9.4",
+=======
+    "jwt-decode": "^4.0.0",
+>>>>>>> 874e2afa70804f4a95615d9d0ea715678f5e5a46
     "libphonenumber-js": "^1.11.18",
     "lucide-react": "^0.474.0",
     "next": "15.1.4",
