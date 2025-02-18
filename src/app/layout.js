@@ -1,5 +1,6 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { AuthProvider } from "@/context/AuthContext"; // ✅ Import Auth Context
 import './styles/navbar.css';
 import './styles/footer.css';
 import './globals.css';
@@ -14,16 +15,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-      <html lang="en" suppressHydrationWarning>
-        <body  suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
+      <body  suppressHydrationWarning>
+        <AuthProvider>
           <Providers>
             <RouteGuard>
-                <Navbar /> 
-                {children}
-                <Footer />
+              <Navbar /> 
+              {children}
+              <Footer />
             </RouteGuard>
           </Providers>
-        </body>
-      </html>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }
