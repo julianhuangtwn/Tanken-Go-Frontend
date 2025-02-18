@@ -25,7 +25,8 @@ export default function Page(){
       try {
         const response = await fetch(NEXT_PUBLIC_API_URL + "/v1/trip", { headers: { Authorization: `Bearer ${getToken()}` }});
         if (!response.ok) {
-          throw new Error("Failed to fetch trips");
+          console.error("Error fetching trips:", response.message);
+          return
         }
         const data = await response.json();
         setTrips(data.trips);
@@ -60,14 +61,15 @@ export default function Page(){
         });
 
       if (!response.ok) {
-        throw new Error("Failed to create a new trip");
+        console.error()
+
       }
       const data = await response.json();
       setTrips([...trips, data.trip]);
       
       
     } catch(error) {
-      console.error("Error creating a new trip");
+      console.error(error.message);
     }
   }
   

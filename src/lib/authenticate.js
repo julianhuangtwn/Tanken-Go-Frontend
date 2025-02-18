@@ -30,19 +30,19 @@ export async function authenticateUser (identifier, password) {
 }
 
 function setToken(token) {
-    localStorage.setItem("access_token", token);
+    localStorage.setItem("token", token);
 }
 
 export function getToken() {
     try {
-      return localStorage.getItem('access_token');
+      return localStorage.getItem('token');
     } catch (err) {
       return null;
     }
 }
 
 export function removeToken() {
-    localStorage.removeItem('access_token');
+    localStorage.removeItem('token');
 }
 
 export function readToken() {
