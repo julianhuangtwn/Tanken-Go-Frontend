@@ -2,13 +2,18 @@
 
 import TripList from '@/components/tripList';
 import Image from 'next/image'
+import AiResponse from '@/components/AiResponse';
 import { useState, useEffect, useRef } from 'react';
+
+const token = localStorage.getItem('token');
 
 export default function Page() {
     //Messages are stored in arrays and only rerender when new messages are added
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState([]);
     const messageAreaRef = useRef(null);
+
+    console.log(token);
 
     //Auto scrolls to the bottom when message is sent and received
     useEffect(() => {
@@ -17,51 +22,69 @@ export default function Page() {
         }
     }, [messages]);
 
-    const handleSend = async () => {
-        //Prevent empty submission
-        if (!input.trim()) {
-            return; 
+    // Effect to handle API call when new user message is added
+    useEffect(() => {
+        if (messages.length === 0) return; // Skip if no messages
+
+        // Only make the API call when the user has sent a new message
+        const userMessage = messages[messages.length - 1];
+        if (userMessage.role === 'user') {
+            fetchAIResponse(messages); // Fetch AI response after user message
         }
+    }, [messages]); // This will run whenever messages change
 
-        const userMessage = {
-            id: messages.length + 1,
-            type: 'user',
-            text: input.trim(),
-        };
-        setMessages((prev) => [...prev, userMessage]);
-
-        //Clear input field
-        setInput('');
-
+    const fetchAIResponse = async (messages) => {
         try {
+            const formattedMessages = messages.map(msg => ({
+                ...msg,
+                content: typeof msg.content === "object" ? JSON.stringify(msg.content) : msg.content,
+            }));
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/ai`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: input.trim() }),
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: formattedMessages }),
             });
 
             if (response.ok) {
                 const data = await response.json();
                 const aiMessage = {
-                    id: messages.length + 2,
-                    type: 'ai',
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // Change this when backend data structure updates
-                    text: data.data.content,
+                    id: messages.length + 1,
+                    role: 'assistant',
+                    content: data,
                 };
-                setMessages((prev) => [...prev, aiMessage]);
+                setMessages((prevMessages) => [...prevMessages, aiMessage]);
+                
             } else {
                 console.error('Failed to fetch response from backend');
             }
         } catch (error) {
-            const aiMessage = {
-                id: messages.length + 2,
-                type: 'ai',
-                text: "The AI tool is not running, please try again later",
-            };
-            setMessages((prev) => [...prev, aiMessage]);
             console.error('Error:', error);
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                    id: prevMessages.length + 1,
+                    role: 'assistant',
+                    content: "The AI tool is not running, please try again later",
+                },
+            ]);
         }
+    };
+
+    const handleSend = async () => {
+        if (!input.trim()) return; // Prevent empty messages
+
+        const userMessage = {
+            id: messages.length + 1,
+            role: 'user',
+            content: input.trim(),
+        };
+
+        // Clear input field and add user message to state
+        setInput('');
+        setMessages((prevMessages) => [...prevMessages, userMessage]);
     };
 
     return (
@@ -83,14 +106,14 @@ export default function Page() {
                         </div>
                     )}
                 
-                {messages.map((message) => (
+                    {messages.map((message) => (
                         <div
                             key={message.id}
                             className={`flex max-w-full ${
-                                message.type === 'user' ? 'justify-end' : 'justify-start'
+                                message.role === 'user' ? 'justify-end' : 'justify-start'
                             }`}
                         >
-                            {message.type === 'ai' && (
+                            {message.role === 'assistant' && (
                                 <div className="relative min-w-12 max-w-12 h-12 mr-2">
                                     <Image
                                         src={'/AI Icon.png'}
@@ -104,13 +127,18 @@ export default function Page() {
 
                             <div
                                 className={`break-words p-3 rounded-lg max-w-full ${
-                                    message.type === 'user'
+                                    message.role === 'user'
                                         ? 'bg-blue-500 text-white'
                                         : 'bg-gray-300 text-black'
                                 }`}
                             >
-                                {message.text}
+                                { message.role === 'assistant' ? (
+                                    <AiResponse response = {message.content}/>
+                                ) : (
+                                    <p>{message.content}</p>
+                                )}
                             </div>
+                            
                         </div>
                     ))}
                     
