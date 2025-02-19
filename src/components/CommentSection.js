@@ -80,10 +80,14 @@ export default function CommentSection({ tripId }) {
             await axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL}/v1/comments`,
                 { tripId, content, rating },
+<<<<<<< HEAD
                 { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json"} }
+=======
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+>>>>>>> master
             );
 
-            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`)
+            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } })
                 .then((res) => {
                     setComments(res.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
                     setUserHasCommented(true);
@@ -156,7 +160,7 @@ export default function CommentSection({ tripId }) {
             console.log("Update Response:", response);
     
             if (response.status === 200) {
-                const updatedComments = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`);
+                const updatedComments = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } });
                 setComments(updatedComments.data.sort((a, b) => new Date(b.TIMESTAMP) - new Date(a.TIMESTAMP)));
                 setEditingComment(null);
             } else {
