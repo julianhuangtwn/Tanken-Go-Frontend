@@ -50,6 +50,9 @@ const Navbar = () => {
         <li>
           <Link href="/contact">Contact</Link>
         </li>
+        <li>
+          <Link href="/account/details">Account</Link>
+        </li>
       </ul>
       <div className="nav-right">
         { user.isLoggedIn ? (

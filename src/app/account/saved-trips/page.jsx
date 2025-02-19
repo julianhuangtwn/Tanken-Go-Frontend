@@ -79,7 +79,7 @@ export default function Page(){
       <div className="container">
         <h1 className="text-3xl font-sans font-semibold mb-6">Saved Trips</h1>
         {/** MOVE THIS SECTION WHEN USER SAVE TRIP PAGE IS HERE */}
-        <Button onClick={handleCreateButtonClick}>Create a new trip</Button>
+        <Button onClick={handleCreateButtonClick}>Save a new trip</Button>
 
         {/** END */}
         <div className="flex flex-wrap flex-row gap-6 my-4">
