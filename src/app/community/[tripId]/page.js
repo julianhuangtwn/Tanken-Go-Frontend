@@ -59,6 +59,13 @@ export default function TripDetailPage() {
       <Image src="/trip-banner.jpg" alt="Trip Banner" width={800} height={300} className="object-cover rounded-xl mb-6" />
       <h1 className="text-6xl font-bold text-center mb-5 text-indigo-700">{trip.tripName}</h1>
       <p className="text-center text-xl mb-6 font-medium text-gray-800">💰 ${trip.totalCostEstimate} | 🕒 {trip.duration} Days | 👤 {trip.username}</p>
+      
+      <div className="flex justify-center gap-4 text-lg font-semibold text-gray-700 mb-4">
+       <div className="text-center">🏛️ {trip.attractionCount} <div className="text-sm text-gray-500">Attractions</div></div>
+       <div className="text-center">🍽️ {trip.restaurantCount} <div className="text-sm text-gray-500">Restaurants</div></div>
+       <div className="text-center">🏨 {trip.hotelCount} <div className="text-sm text-gray-500">Hotels</div></div>
+      </div>
+
 
       <div className="bg-white rounded-lg p-6 border border-gray-300">
         <h2 className="text-3xl font-bold mb-5 text-indigo-600">🗺️ Itinerary</h2>
