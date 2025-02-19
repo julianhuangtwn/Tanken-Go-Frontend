@@ -25,7 +25,7 @@ export default function TripList({setIsMapOpen}) {
 
       try {
         const response = await fetch(
-          `http://localhost:8080/v1/image?query=${encodeURIComponent(query)}&orientation=landscape`,
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/image?query=${encodeURIComponent(query)}&orientation=landscape`,
           {
             method: "GET",
             headers: {
