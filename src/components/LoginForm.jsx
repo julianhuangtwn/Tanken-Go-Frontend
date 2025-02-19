@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+
+import { useAtom } from 'jotai';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -30,6 +32,9 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+
+import { authenticateUser, readToken, getToken } from '@/lib/authenticate';
+import { userAtom } from '@/lib/userAtom';
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -70,9 +75,10 @@ export function LoginForm({
   ...props
 }) {
     // 2. Set up state flags for the form
+    const [ user, setUser ] = useAtom(userAtom);
     const [ isSubmitting, setIsSubmitting ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState(null);
-    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
+    // const [ isLoggedIn, setIsLoggedIn ] = useState(false);
 
     // 3. Initialize the form
     const form = useForm({
@@ -87,48 +93,52 @@ export function LoginForm({
 
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
-        if (isLoggedIn)
-            push('/account');
-     }, [isLoggedIn]);
+        // if (user.isLoggedIn) {
+        //     push('/account');
+        // }
+        const storedToken = getToken();
+        if (storedToken) {
+            const tokenData = readToken();
+            setUser({
+                isLoggedIn: true,
+                id: tokenData.id,
+                fullName: tokenData.fullName,
+                email: tokenData.email,
+                phone: tokenData.phone,
+            })
+            push('/account/details');
+        } else {
+            console.log("No token found.")
+        }
+     }, [setUser]);
 
     // 4. Handle form submission
     const onSubmit = async (data) => {
         setIsSubmitting(true)
         setErrorMessage(null)
-        
+
         try {
-            const response = await fetch(NEXT_PUBLIC_API_URL + "/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            })
-
-            const responseData = await response.json()
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    console.log("Invalid credentials.")
-                    setErrorMessage("Invalid credentials.")
-                } else {
-                    console.error("An unexpected error occurred:", responseData)
-                    setErrorMessage(responseData.message)
-                }
+            const response = await authenticateUser(data.identifier, data.password);
+            if (response && response.success) {
+                const tokenData = readToken();
+                setUser({
+                    isLoggedIn: true,
+                    id: tokenData.id,
+                    fullName: tokenData.fullName,
+                    email: tokenData.email,
+                    phone: tokenData.phone,
+                })
+                push('/account/details');
             } else {
-                console.log("Login successful!");
-
-            localStorage.setItem("token", responseData.token);
-                //flag true here to the component will redirect to the dashboard in useEffect
-                setIsLoggedIn(true);
+                setErrorMessage("Invalid credentials.")
             }
-
         } catch (error) {
             console.error("An unexpected error occurred:", error)
             setErrorMessage(error.message)
         } finally {
             setIsSubmitting(false)
         }
+
     }
 
   return (
