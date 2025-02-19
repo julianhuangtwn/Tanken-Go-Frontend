@@ -25,8 +25,14 @@ export default function TripList({setIsMapOpen}) {
 
       try {
         const response = await fetch(
-          `http://localhost:8080/v1/image?query=${encodeURIComponent(query)}&orientation=landscape`
-        );
+          `http://localhost:8080/v1/image?query=${encodeURIComponent(query)}&orientation=landscape`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           const imageUrl = data.imageUrl; // Assuming the backend sends the image URL in this format

@@ -80,7 +80,7 @@ export default function CommentSection({ tripId }) {
             await axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL}/v1/comments`,
                 { tripId, content, rating },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json"} }
             );
 
             axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${tripId}`)
@@ -108,7 +108,7 @@ export default function CommentSection({ tripId }) {
         try {
             const response = await axios.delete(
                 `${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${commentId}`,
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json"} }
             );
     
             if (response.status === 200) {
@@ -150,7 +150,7 @@ export default function CommentSection({ tripId }) {
             const response = await axios.put(
                 `${process.env.NEXT_PUBLIC_API_URL}/v1/comments/${editingComment}`,
                 { content: updatedContent, rating: updatedRating },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json"} }
             );
     
             console.log("Update Response:", response);
