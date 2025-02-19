@@ -7,7 +7,7 @@ const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function TripMap() {
   const [data, setData] = useState(mockData);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (!data || data.length === 0) return; // Ensure data is available
     setLoading(true);
