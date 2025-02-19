@@ -1,162 +1,198 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import AiResponse from '@/components/AiResponse';
-import { useState, useEffect, useRef } from 'react';
+import TripList from "@/components/plan-ai/tripList";
+import Image from "next/image";
+import AiResponse from "@/components/plan-ai/AiResponse";
+import { useState, useEffect, useRef } from "react";
+import TripMap from "@/components/plan-ai/tripMap";
+import { LoadScript } from "@react-google-maps/api";
 
-const token = localStorage.getItem('token');
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function Page() {
-    //Messages are stored in arrays and only rerender when new messages are added
-    const [messages, setMessages] = useState([]);
-    const [input, setInput] = useState([]);
-    const messageAreaRef = useRef(null);
+  //Messages are stored in arrays and only rerender when new messages are added
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState([]);
+  const messageAreaRef = useRef(null);
+  const [token, setToken] = useState(null);
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
-    console.log(token);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
 
-    //Auto scrolls to the bottom when message is sent and received
-    useEffect(() => {
-        if (messageAreaRef.current) {
-            messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
-        }
-    }, [messages]);
+  //Auto scrolls to the bottom when message is sent and received
+  useEffect(() => {
+    if (messageAreaRef.current) {
+      messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-    // Effect to handle API call when new user message is added
-    useEffect(() => {
-        if (messages.length === 0) return; // Skip if no messages
+  // Effect to handle API call when new user message is added
+  useEffect(() => {
+    if (messages.length === 0) return; // Skip if no messages
 
-        // Only make the API call when the user has sent a new message
-        const userMessage = messages[messages.length - 1];
-        if (userMessage.role === 'user') {
-            fetchAIResponse(messages); // Fetch AI response after user message
-        }
-    }, [messages]); // This will run whenever messages change
+    // Only make the API call when the user has sent a new message
+    const userMessage = messages[messages.length - 1];
+    if (userMessage.role === "user") {
+      fetchAIResponse(messages); // Fetch AI response after user message
+    }
+  }, [messages]); // This will run whenever messages change
 
-    const fetchAIResponse = async (messages) => {
-        try {
-            const formattedMessages = messages.map(msg => ({
-                ...msg,
-                content: typeof msg.content === "object" ? JSON.stringify(msg.content) : msg.content,
-            }));
+  const fetchAIResponse = async (messages) => {
+    try {
+      const formattedMessages = messages.map((msg) => ({
+        ...msg,
+        content:
+          typeof msg.content === "object"
+            ? JSON.stringify(msg.content)
+            : msg.content,
+      }));
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/ai`, {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: formattedMessages }),
-            });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/ai`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: formattedMessages }),
+      });
 
-            if (response.ok) {
-                const data = await response.json();
-                const aiMessage = {
-                    id: messages.length + 1,
-                    role: 'assistant',
-                    content: data,
-                };
-                setMessages((prevMessages) => [...prevMessages, aiMessage]);
-                
-            } else {
-                console.error('Failed to fetch response from backend');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                {
-                    id: prevMessages.length + 1,
-                    role: 'assistant',
-                    content: "The AI tool is not running, please try again later",
-                },
-            ]);
-        }
-    };
-
-    const handleSend = async () => {
-        if (!input.trim()) return; // Prevent empty messages
-
-        const userMessage = {
-            id: messages.length + 1,
-            role: 'user',
-            content: input.trim(),
+      if (response.ok) {
+        const data = await response.json();
+        const aiMessage = {
+          id: messages.length + 1,
+          role: "assistant",
+          content: data,
         };
+        setMessages((prevMessages) => [...prevMessages, aiMessage]);
+      } else {
+        console.error("Failed to fetch response from backend");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: prevMessages.length + 1,
+          role: "assistant",
+          content: "The AI tool is not running, please try again later",
+        },
+      ]);
+    }
+  };
 
-        // Clear input field and add user message to state
-        setInput('');
-        setMessages((prevMessages) => [...prevMessages, userMessage]);
+  const handleSend = async () => {
+    if (!input.trim()) return; // Prevent empty messages
+
+    const userMessage = {
+      id: messages.length + 1,
+      role: "user",
+      content: input.trim(),
     };
 
-    return (
-        <div className="h-screen p-4">
-            <div className="flex flex-col h-full max-h-full max-w-screen-md rounded-lg bg-themePink">
-                <div ref={messageAreaRef} className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5">
-                
-                {messages.length === 0 && (
-                        <div className="ml-8 m-auto text-white">
-                            <h1 className="text-5xl">Ask Me Anything and Start Planning Your Trip!</h1>
-                            <br></br>
-                            <p className="text-2xl">Try:</p>
-                            <ul>
-                                <li>I have a budget of $2000, what should I do on a three-day trip to [destination]?</li>
-                                <li>I don’t like crowded places, any suggestions for [destination]?</li>
-                                <li>What can I do for a 5 hour layover in [destination]</li>
-                            </ul>
-                        </div>
-                    )}
-                
-                    {messages.map((message) => (
-                        <div
-                            key={message.id}
-                            className={`flex max-w-full ${
-                                message.role === 'user' ? 'justify-end' : 'justify-start'
-                            }`}
-                        >
-                            {message.role === 'assistant' && (
-                                <div className="relative min-w-12 max-w-12 h-12 mr-2">
-                                    <Image
-                                        src={'/AI Icon.png'}
-                                        alt="AI Icon"
-                                        width={48}
-                                        height={48}
-                                        className="rounded-full object-contain"
-                                    />
-                                </div>
-                            )}
+    // Clear input field and add user message to state
+    setInput("");
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+  };
 
-                            <div
-                                className={`break-words p-3 rounded-lg max-w-full ${
-                                    message.role === 'user'
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-300 text-black'
-                                }`}
-                            >
-                                { message.role === 'assistant' ? (
-                                    <AiResponse response = {message.content}/>
-                                ) : (
-                                    <p>{message.content}</p>
-                                )}
-                            </div>
-                            
-                        </div>
-                    ))}
-                    
-                </div>
-                <div className="mx-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type your message..."
-                        className="flex-grow p-2 border rounded-lg"
+  return (
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "row",
+        maxHeight: "80vh",
+      }}
+    >
+      <div className="h-screen p-4" style={{ width: "50%" }}>
+        <div
+          className="flex flex-col h-full max-h-full rounded-lg bg-themePink"
+          style={{ width: "100%", maxHeight: "75vh" }}
+        >
+          <div
+            ref={messageAreaRef}
+            className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5"
+          >
+            {messages.length === 0 && (
+              <div className="ml-8 m-auto text-white">
+                <h1 className="text-5xl">
+                  Ask Me Anything and Start Planning Your Trip!
+                </h1>
+                <br></br>
+                <p className="text-2xl">Try:</p>
+                <ul>
+                  <li>
+                    I have a budget of $2000, what should I do on a three-day
+                    trip to [destination]?
+                  </li>
+                  <li>
+                    I don’t like crowded places, any suggestions for
+                    [destination]?
+                  </li>
+                  <li>What can I do for a 5 hour layover in [destination]</li>
+                </ul>
+              </div>
+            )}
+
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex max-w-full ${
+                  message.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                {message.role === "assistant" && (
+                  <div className="relative min-w-12 max-w-12 h-12 mr-2">
+                    <Image
+                      src={"/AI Icon.png"}
+                      alt="AI Icon"
+                      width={48}
+                      height={48}
+                      className="rounded-full object-contain"
                     />
-                    <button
-                        onClick={handleSend}
-                        className="px-2 py-2 bg-blue-500 text-white rounded-lg"
-                    >
-                        Send
-                    </button>
+                  </div>
+                )}
+
+                <div
+                  className={`break-words p-3 rounded-lg max-w-full ${
+                    message.role === "user"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-300 text-black"
+                  }`}
+                >
+                  {message.role === "assistant" ? (
+                    <AiResponse response={message.content} />
+                  ) : (
+                    <p>{message.content}</p>
+                  )}
                 </div>
-            </div>
+              </div>
+            ))}
+          </div>
+          <div className="mx-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-grow p-2 border rounded-lg"
+            />
+            <button
+              onClick={handleSend}
+              className="px-2 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              Send
+            </button>
+          </div>
         </div>
-    )   
+      </div>
+      <LoadScript googleMapsApiKey={apiKey}>
+        <TripList setIsMapOpen={setIsMapOpen} />
+        {isMapOpen && <TripMap />}
+      </LoadScript>
+    </div>
+  );
 }
