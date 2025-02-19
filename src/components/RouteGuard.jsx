@@ -4,8 +4,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import { isAuthenticated } from '@/lib/authenticate';
-import { useAtom } from 'jotai';
-import { userAtom } from '@/lib/userAtom';
 
 const PUBLIC_PATHS = ['/login', '/', '/register','/_error'];
 
