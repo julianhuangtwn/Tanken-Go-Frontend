@@ -54,11 +54,15 @@ export default function TripDetailPage() {
   if (status.error) return <div className="text-center text-red-500 font-bold">{status.error}</div>;
   if (!trip) return <div className="text-center text-gray-500 italic">No trip information available.</div>;
 
-  return ( <>
+  return (
     <div className="max-w-5xl mx-auto p-10 bg-gray-50 rounded-xl shadow-2xl border">
       <Image src="/trip-banner.jpg" alt="Trip Banner" width={800} height={300} className="object-cover rounded-xl mb-6" />
       <h1 className="text-6xl font-bold text-center mb-5 text-indigo-700">{trip.tripName}</h1>
       <p className="text-center text-xl mb-6 font-medium text-gray-800">💰 ${trip.totalCostEstimate} | 🕒 {trip.duration} Days | 👤 {trip.username}</p>
+      
+      <div className="text-center text-lg font-semibold text-gray-700 mb-4">
+        🏛️ Attractions: {trip.attractionCount} | 🍽️ Restaurants: {trip.restaurantCount} | 🏨 Hotels: {trip.hotelCount}
+      </div>
 
       <div className="bg-white rounded-lg p-6 border border-gray-300">
         <h2 className="text-3xl font-bold mb-5 text-indigo-600">🗺️ Itinerary</h2>
@@ -79,12 +83,11 @@ export default function TripDetailPage() {
           <p className="text-center text-gray-500 italic">No destinations listed for this trip.</p>
         )}
       </div>
-    </div>
 
-    <div className="mt-10 text-center">
-    <h4 className="text-4xl font-bold mb-6 text-indigo-700">💬 Comments</h4>
-    <CommentSection tripId={tripId} />
+      <div className="mt-10 text-center">
+        <h4 className="text-4xl font-bold mb-6 text-indigo-700">💬 Comments</h4>
+        <CommentSection tripId={tripId} />
+      </div>
     </div>
-    </>
   );
 }
