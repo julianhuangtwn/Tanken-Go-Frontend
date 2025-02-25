@@ -1,71 +1,80 @@
 import React, { useEffect, useState, useMemo } from "react";
-import mockData from "../../../mockData/tripList.json";
 import { ChevronRight, CircleMinus } from "lucide-react";
+import { aiTripAtom } from "@/lib/aiTripAtom";
+import { useAtom } from "jotai";
 
 const IMAGE_WIDTH = 300;
-const IMAGE_HEIGHT = 200;
 
 export default function TripList({setIsMapOpen}) {
-  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isMapOpen, setIsMapOpen1] = useState(false);
+  const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
 
 
   useEffect(() => {
-    // Fetch data from the backend or use mock data
-    setData(mockData);
-  }, []);
+    const fetchImagesSequentially = async () => {
+      const updatedTrips = [...aiTrip]; // Create a copy to hold updates
+      let imagesFetched = false;
 
-  useEffect(() => {
-    // Function to fetch image for a trip
-    const fetchImage = async (query, tripId) => {
-      setLoading(true);
-      setError(null);
+      for (const trip of aiTrip) {
+        if (!trip.imgUrl) {
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/v1/image?query=${encodeURIComponent(trip.name)}&orientation=landscape`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            );
 
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/image?query=${encodeURIComponent(query)}&orientation=landscape`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            if (response.ok) {
+              const data = await response.json();
+              const imageUrl = data.imageUrl;
+
+              // Update the trip in the copy of aiTrip
+              const tripIndex = updatedTrips.findIndex((t) => t.name === trip.name);
+              if (tripIndex !== -1) {
+                updatedTrips[tripIndex] = { ...updatedTrips[tripIndex], imgUrl: imageUrl };
+              }
+              imagesFetched = true;
+            }
+          } catch (err) {
+            console.error("Error fetching image:", err);
           }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          const imageUrl = data.imageUrl; // Assuming the backend sends the image URL in this format
-
-          // Update the imageUrl in the specific trip object
-          setData((prevData) =>
-            prevData.map((trip) =>
-              trip.id === tripId ? { ...trip, imageUrl } : trip
-            )
-          );
-        } else {
-          setError("Failed to fetch image.");
         }
-      } catch (err) {
-        setError("Error fetching image.");
-      } finally {
-        setLoading(false);
+      }
+
+      // After fetching images, update the state only if images were fetched
+      if (imagesFetched) {
+        setAiTripAtom(updatedTrips);
       }
     };
 
-    // Fetch images for trips only once when data is set
-    data.forEach((trip) => {
-      if (!trip.imageUrl) {
-        fetchImage(trip.name, trip.id); // Fetch image using trip's name and id
-      }
-    });
-  }, [data]); // Re-run whenever data changes
+    // Run fetch only if aiTrip has not been updated already
+    if (aiTrip.length > 0) {
+      fetchImagesSequentially();
+    }
+  }, [aiTrip, setAiTripAtom]); // Only runs when aiTrip changes
+  
 
   const groupByDate = (trips) => {
+    console.log ("trips ",trips);
     return trips.reduce((acc, trip) => {
-      if (!acc[trip.date]) acc[trip.date] = []; // If date doesn't exist, create an empty array
-      acc[trip.date].push(trip); // Add the trip to the corresponding date array
-      return acc; // Return the updated accumulator
+      console.log("date"  , trip.visit_date);
+      // Check if the trip has a visit_date; use 'unknown date' as fallback
+      const date = trip.visit_date || 'unknown date';
+  
+      // If the date doesn't exist in the accumulator, create an empty array
+      if (!acc[date]) acc[date] = [];
+  
+      // Push the trip to the corresponding date array
+      acc[date].push(trip);
+  
+      // Return the updated accumulator
+      return acc;
     }, {}); // Initial value of acc is an empty object {}
   };
 
@@ -77,7 +86,9 @@ export default function TripList({setIsMapOpen}) {
     setIsMapOpen((prev) => !prev);
   }
 
-  const groupedTrips = useMemo(() => groupByDate(data), [data]);
+  const groupedTrips = useMemo(() => groupByDate(aiTrip), [aiTrip]);
+
+  if(loading) return <div>Loading...</div>;
 
   return (
     <div
@@ -122,7 +133,7 @@ export default function TripList({setIsMapOpen}) {
         </button>
       </div>
 
-      {!data || data.length === 0 ? (
+      {aiTrip.length === 1 && !aiTrip[0].city ? (
         <div
           style={{
             margin: "auto",
@@ -151,7 +162,7 @@ export default function TripList({setIsMapOpen}) {
                 <ChevronRight />
                 <h2>{date}</h2>
               </div>
-              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }} key={index}>
                 {groupedTrips[date].map((trip) => (
                   <div
                     key={trip.id}
@@ -170,9 +181,9 @@ export default function TripList({setIsMapOpen}) {
                     <CircleMinus />
                     <div style={{ flexDirection: "row", display: "flex" }}>
                       {/* Show image if fetched */}
-                      {trip.imageUrl ? (
+                      {trip.imgUrl ? (
                         <img
-                          src={trip.imageUrl}
+                          src={trip.imgUrl}
                           alt={trip.name}
                           style={{ width: IMAGE_WIDTH, height:"auto", borderRadius: "5px", objectFit: "contain" }}
                           

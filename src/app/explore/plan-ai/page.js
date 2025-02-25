@@ -6,6 +6,9 @@ import AiResponse from "@/components/plan-ai/AiResponse";
 import { useState, useEffect, useRef } from "react";
 import TripMap from "@/components/plan-ai/tripMap";
 import { LoadScript } from "@react-google-maps/api";
+import { aiTripAtom } from "@/lib/aiTripAtom";
+import { useAtom } from "jotai";
+
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -16,6 +19,7 @@ export default function Page() {
   const messageAreaRef = useRef(null);
   const [token, setToken] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -23,15 +27,13 @@ export default function Page() {
     }
   }, []);
 
-  //Auto scrolls to the bottom when message is sent and received
+  // Effect to handle API call when new user message is added
   useEffect(() => {
+  //Auto scrolls to the bottom when message is sent and received
     if (messageAreaRef.current) {
       messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
     }
-  }, [messages]);
 
-  // Effect to handle API call when new user message is added
-  useEffect(() => {
     if (messages.length === 0) return; // Skip if no messages
 
     // Only make the API call when the user has sent a new message
@@ -67,7 +69,13 @@ export default function Page() {
           role: "assistant",
           content: data,
         };
-        setMessages((prevMessages) => [...prevMessages, aiMessage]);
+
+        setMessages((prevMessages) => {
+          
+          return[...prevMessages, aiMessage]
+        });
+
+        setAiTripAtom(()=> data.trip.destinations)
       } else {
         console.error("Failed to fetch response from backend");
       }
