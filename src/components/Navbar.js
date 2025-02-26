@@ -1,5 +1,5 @@
 // src/components/Navbar.js
-"use client";
+"use client"; // Add this directive at the top of the file
 
 
 import Link from 'next/link';
@@ -31,9 +31,9 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar flex justify-between items-center px-8 py-4 w-full mx-auto">
-      <Link href="/">
-        <div className="logo flex-shrink-0">
+    <nav className="navbar">
+      <Link href='/'>
+        <div className="flex logo items-center">
           <h1 className={`${travel.className} antialiased text-6xl`}>Tanken-GO</h1>
         </div>
       </Link>
