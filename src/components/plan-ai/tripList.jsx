@@ -4,6 +4,8 @@ import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
 
 const IMAGE_WIDTH = 300;
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const imageApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function TripList({setIsMapOpen}) {
   const [loading, setLoading] = useState(false);
@@ -12,15 +14,19 @@ export default function TripList({setIsMapOpen}) {
 
 
   useEffect(() => {
-    const fetchImagesSequentially = async () => {
-      const updatedTrips = [...aiTrip]; // Create a copy to hold updates
-      let imagesFetched = false;
+    const fetchData = async () => {
+      let updatedTrips = [...aiTrip];
+      let hasUpdates = false;
 
-      for (const trip of aiTrip) {
+      // Create promises for missing images and coordinates
+      const fetchPromises = aiTrip.map(async (trip, index) => {
+        let updatedTrip = { ...trip };
+
+        // Fetch image if missing
         if (!trip.imgUrl) {
           try {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/v1/image?query=${encodeURIComponent(trip.name)}&orientation=landscape`,
+              `${imageApiUrl}/v1/image?query=${encodeURIComponent(trip.name)}&orientation=landscape`,
               {
                 method: "GET",
                 headers: {
@@ -32,32 +38,60 @@ export default function TripList({setIsMapOpen}) {
 
             if (response.ok) {
               const data = await response.json();
-              const imageUrl = data.imageUrl;
-
-              // Update the trip in the copy of aiTrip
-              const tripIndex = updatedTrips.findIndex((t) => t.name === trip.name);
-              if (tripIndex !== -1) {
-                updatedTrips[tripIndex] = { ...updatedTrips[tripIndex], imgUrl: imageUrl };
-              }
-              imagesFetched = true;
+              updatedTrip.imgUrl = data.imageUrl;
+              hasUpdates = true;
             }
           } catch (err) {
-            console.error("Error fetching image:", err);
+            console.error(`Error fetching image for ${trip.name}:`, err);
           }
         }
-      }
 
-      // After fetching images, update the state only if images were fetched
-      if (imagesFetched) {
+        // Fetch lat/long if missing
+        if (!trip.lat || !trip.long) {
+          try {
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+                trip.name
+              )}&key=${apiKey}`
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+              const lat = data.results[0]?.geometry?.location?.lat;
+              const long = data.results[0]?.geometry?.location?.lng;
+
+              if (lat && long) {
+                updatedTrip.latitude = lat;
+                updatedTrip.longitude = long;
+                hasUpdates = true;
+              }
+            }
+          } catch (err) {
+            console.error(`Error fetching lat/long for ${trip.name}:`, err);
+          }
+        }
+
+        updatedTrips[index] = updatedTrip;
+      });
+
+      await Promise.all(fetchPromises);
+
+      // Update state only if data changed
+      if (hasUpdates) {
         setAiTripAtom(updatedTrips);
       }
     };
 
-    // Run fetch only if aiTrip has not been updated already
     if (aiTrip.length > 0) {
-      fetchImagesSequentially();
+      const lastTrip = aiTrip.length - 1;
+      if(aiTrip[lastTrip].imgUrl && aiTrip[lastTrip].latitude && aiTrip[lastTrip].longitude) {
+        setLoading(false);
+      }
+      else{
+        fetchData();
+      }
     }
-  }, [aiTrip, setAiTripAtom]); // Only runs when aiTrip changes
+  }, [aiTrip, setAiTripAtom]);
   
 
   const groupByDate = (trips) => {
