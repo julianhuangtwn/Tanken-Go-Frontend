@@ -56,12 +56,17 @@ const AiResponse = ({ response }) => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      weekday: "long",  // Example: "Monday"
-      year: "numeric",
-      month: "long",    // Example: "February"
-      day: "numeric",   // Example: "14"
-    });
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
+    const [year, month, day] = dateString.split("-");
+    const date = new Date(year, month - 1, day); 
+  
+    return `${daysOfWeek[date.getDay()]}, ${months[month - 1]} ${day}, ${year}`;
   };
   
   
