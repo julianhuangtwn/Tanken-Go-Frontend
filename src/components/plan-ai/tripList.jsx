@@ -1,83 +1,125 @@
 import React, { useEffect, useState, useMemo } from "react";
-import mockData from "../../../mockData/tripList.json";
 import { ChevronRight, CircleMinus } from "lucide-react";
+import { aiTripAtom } from "@/lib/aiTripAtom";
+import { useAtom } from "jotai";
 
 const IMAGE_WIDTH = 300;
-const IMAGE_HEIGHT = 200;
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const imageApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function TripList({setIsMapOpen}) {
-  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isMapOpen, setIsMapOpen1] = useState(false);
+  const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
 
 
   useEffect(() => {
-    // Fetch data from the backend or use mock data
-    setData(mockData);
-  }, []);
+    const fetchData = async () => {
+      let updatedTrips = [...aiTrip];
+      let hasUpdates = false;
 
-  useEffect(() => {
-    // Function to fetch image for a trip
-    const fetchImage = async (query, tripId) => {
-      setLoading(true);
-      setError(null);
+      // Create promises for missing images and coordinates
+      const fetchPromises = aiTrip.map(async (trip, index) => {
+        let updatedTrip = { ...trip };
 
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/image?query=${encodeURIComponent(query)}&orientation=landscape`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        // Fetch image if missing
+        if (!trip.imgUrl) {
+          try {
+            const response = await fetch(
+              `${imageApiUrl}/v1/image?query=${encodeURIComponent(trip.name)}&orientation=landscape`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+              updatedTrip.imgUrl = data.imageUrl;
+              hasUpdates = true;
+            }
+          } catch (err) {
+            console.error(`Error fetching image for ${trip.name}:`, err);
           }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          const imageUrl = data.imageUrl; // Assuming the backend sends the image URL in this format
-
-          // Update the imageUrl in the specific trip object
-          setData((prevData) =>
-            prevData.map((trip) =>
-              trip.id === tripId ? { ...trip, imageUrl } : trip
-            )
-          );
-        } else {
-          setError("Failed to fetch image.");
         }
-      } catch (err) {
-        setError("Error fetching image.");
-      } finally {
-        setLoading(false);
+
+        // Fetch lat/long if missing
+        if (!trip.lat || !trip.long) {
+          try {
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+                trip.name
+              )}&key=${apiKey}`
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+              const lat = data.results[0]?.geometry?.location?.lat;
+              const long = data.results[0]?.geometry?.location?.lng;
+
+              if (lat && long) {
+                updatedTrip.latitude = lat;
+                updatedTrip.longitude = long;
+                hasUpdates = true;
+              }
+            }
+          } catch (err) {
+            console.error(`Error fetching lat/long for ${trip.name}:`, err);
+          }
+        }
+
+        updatedTrips[index] = updatedTrip;
+      });
+
+      await Promise.all(fetchPromises);
+
+      // Update state only if data changed
+      if (hasUpdates) {
+        setAiTripAtom(updatedTrips);
       }
     };
 
-    // Fetch images for trips only once when data is set
-    data.forEach((trip) => {
-      if (!trip.imageUrl) {
-        fetchImage(trip.name, trip.id); // Fetch image using trip's name and id
+    if (aiTrip.length > 0) {
+      const lastTrip = aiTrip.length - 1;
+      if(aiTrip[lastTrip].imgUrl && aiTrip[lastTrip].latitude && aiTrip[lastTrip].longitude) {
+        setLoading(false);
       }
-    });
-  }, [data]); // Re-run whenever data changes
+      else{
+        fetchData();
+      }
+    }
+  }, [aiTrip, setAiTripAtom]);
+  
 
   const groupByDate = (trips) => {
     return trips.reduce((acc, trip) => {
-      if (!acc[trip.date]) acc[trip.date] = []; // If date doesn't exist, create an empty array
-      acc[trip.date].push(trip); // Add the trip to the corresponding date array
-      return acc; // Return the updated accumulator
+      // Check if the trip has a visit_date; use 'unknown date' as fallback
+      const date = trip.visit_date || 'unknown date';
+  
+      // If the date doesn't exist in the accumulator, create an empty array
+      if (!acc[date]) acc[date] = [];
+  
+      // Push the trip to the corresponding date array
+      acc[date].push(trip);
+  
+      // Return the updated accumulator
+      return acc;
     }, {}); // Initial value of acc is an empty object {}
   };
 
   const handleMapBtn = () => {
     setIsMapOpen1((prev) => {
-      console.log(!prev);
       return !prev
     });
     setIsMapOpen((prev) => !prev);
   }
 
-  const groupedTrips = useMemo(() => groupByDate(data), [data]);
+  const groupedTrips = useMemo(() => groupByDate(aiTrip), [aiTrip]);
+
+  if(loading) return <div>Loading...</div>;
 
   return (
     <div
@@ -122,7 +164,7 @@ export default function TripList({setIsMapOpen}) {
         </button>
       </div>
 
-      {!data || data.length === 0 ? (
+      {aiTrip.length === 1 && !aiTrip[0].city ? (
         <div
           style={{
             margin: "auto",
@@ -151,10 +193,10 @@ export default function TripList({setIsMapOpen}) {
                 <ChevronRight />
                 <h2>{date}</h2>
               </div>
-              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-                {groupedTrips[date].map((trip) => (
+              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }} key={index}>
+                {groupedTrips[date].map((trip, index) => (
                   <div
-                    key={trip.id}
+                    key={index}
                     style={{
                       border: "1px solid #ccc",
                       padding: "10px",
@@ -170,9 +212,9 @@ export default function TripList({setIsMapOpen}) {
                     <CircleMinus />
                     <div style={{ flexDirection: "row", display: "flex" }}>
                       {/* Show image if fetched */}
-                      {trip.imageUrl ? (
+                      {trip.imgUrl ? (
                         <img
-                          src={trip.imageUrl}
+                          src={trip.imgUrl}
                           alt={trip.name}
                           style={{ width: IMAGE_WIDTH, height:"auto", borderRadius: "5px", objectFit: "contain" }}
                           
