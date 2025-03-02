@@ -95,9 +95,7 @@ export default function TripList({setIsMapOpen}) {
   
 
   const groupByDate = (trips) => {
-    console.log ("trips ",trips);
     return trips.reduce((acc, trip) => {
-      console.log("date"  , trip.visit_date);
       // Check if the trip has a visit_date; use 'unknown date' as fallback
       const date = trip.visit_date || 'unknown date';
   
@@ -114,7 +112,6 @@ export default function TripList({setIsMapOpen}) {
 
   const handleMapBtn = () => {
     setIsMapOpen1((prev) => {
-      console.log(!prev);
       return !prev
     });
     setIsMapOpen((prev) => !prev);
@@ -197,9 +194,9 @@ export default function TripList({setIsMapOpen}) {
                 <h2>{date}</h2>
               </div>
               <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }} key={index}>
-                {groupedTrips[date].map((trip) => (
+                {groupedTrips[date].map((trip, index) => (
                   <div
-                    key={trip.id}
+                    key={index}
                     style={{
                       border: "1px solid #ccc",
                       padding: "10px",

@@ -22,10 +22,10 @@ export default function TripMap() {
           center={center}
           zoom={12}
         >
-          {aiTrip.map((aiTrip) => {
+          {aiTrip.map((aiTrip, index) => {
             return (
               <Marker
-                // key={aiTrip.id}
+                key={index}
                 position={{ lat: aiTrip.latitude, lng: aiTrip.longitude }}
               />
             );
