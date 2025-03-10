@@ -27,8 +27,8 @@
   
   /* Start Planning Button */
   .start-button {
-    padding: 15px 30px; /* Button padding */
-    background-color: #e63946; /* Pink button color */
+    padding: 12px 30px; /* Button padding */
+    background-color: #d6336c; /* Pink button color */
     color: white; /* White text */
     font-size: 16px; /* Font size */
     font-weight: bold; /* Bold text */
@@ -39,7 +39,7 @@
   }
   
   .start-button:hover {
-    background-color: #b8263d; /* Darker pink on hover */
+    background-color: #b82658; /* Darker pink on hover */
   }
   
 
@@ -83,14 +83,26 @@
 }
 
 .heroButton {
-    background-color: #d6336c;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
+  padding: 12px 30px; /* Button padding */
+  background-color: #d6336c; /* Pink button color */
+  color: white; /* White text */
+  font-size: 16px; /* Font size */
+  font-weight: bold; /* Bold text */
+  border: none; /* Remove border */
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
 }
+
+.heroButton:hover {
+  background-color: #b82658;
+  transform: translateY(-3px); /* Add a hover animation */
+}
+
+.start-button:hover {
+  background-color: #b82658; /* Darker pink on hover */
+}
+
 
 /* Trip Planners Section */
 .tripPlannersSection {
@@ -124,7 +136,7 @@
   font-size: 18px;
   cursor: pointer;
   margin-bottom: 50px;
-  font-weight: 600; /* Emphasize button text */
+  font-weight: 600;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
