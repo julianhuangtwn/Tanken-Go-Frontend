@@ -32,7 +32,7 @@ export default function TripDetailPage() {
 
         if (result?.status === 'ok' && tripData) {
           const duration = tripData.endDate && tripData.startDate
-            ? Math.ceil((new Date(tripData.endDate) - new Date(tripData.startDate)) / (1000 * 60 * 60 * 24))
+            ? Math.ceil((new Date(tripData.endDate) - new Date(tripData.startDate)) / (1000 * 60 * 60 * 24)) + 1
             : 0;
 
           setTrip({
