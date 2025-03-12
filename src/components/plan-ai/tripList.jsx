@@ -179,7 +179,7 @@ export default function TripList({ setIsMapOpen }) {
         </button>
       </div>
 
-      {aiTrip.length === 1 || !aiTrip[0]?.city ? (
+      {!aiTrip[0]?.city ? (
         <div
           style={{
             margin: "auto",
