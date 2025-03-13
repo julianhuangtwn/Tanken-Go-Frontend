@@ -37,7 +37,7 @@ import number_30 from "../../../public/mapMarker/number_30.png";
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 const MAP_MARKER_ICON = [
-  "mapMarker/number_1.png",
+  "/mapMarker/number_1.png",
   "/mapMarker/number_2.png",
   "/mapMarker/number_3.png",
   "/mapMarker/number_4.png",
