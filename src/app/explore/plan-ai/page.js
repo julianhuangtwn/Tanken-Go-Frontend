@@ -68,7 +68,13 @@ export default function Page() {
           return [...prevMessages, aiMessage];
         });
 
-        setAiTripAtom(() => data.trip.destinations);
+        setAiTripAtom(() => {
+          data.trip.destinations.forEach((destination, index) => {
+            destination.id = index + 1;
+          });
+
+          console.log("trip in map", data.trip.destinations);
+          return data.trip.destinations});
       } else {
         console.error("Failed to fetch response from backend");
       }

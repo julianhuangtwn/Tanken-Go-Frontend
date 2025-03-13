@@ -246,7 +246,7 @@ export default function TripList({ setIsMapOpen }) {
                       ) : (
                         <div>Loading image...</div> // Fallback UI while image is loading
                       )}
-                      <h3 style={{ width: "100%" }}>{index+1}. {trip.name}</h3>
+                      <h3 style={{ width: "100%" }}>{trip.id}. {trip.name}</h3>
                     </div>
                   </div>
                 ))}
