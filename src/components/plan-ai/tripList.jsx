@@ -117,6 +117,44 @@ export default function TripList({setIsMapOpen}) {
     setIsMapOpen((prev) => !prev);
   }
 
+  // Save Trip
+  const handleSaveTripBtn = async () => {
+    console.log(aiTrip);
+    // Dummy Data 
+    const newTrip = {
+      tripName: "New Trip",
+      startDate: "2022-12-01",
+      endDate: "2022-12-15",
+      totalCostEstimate: 1000,
+      isPublic: "N",
+    };
+
+    
+    // try {
+    //   const response = await fetch(NEXT_PUBLIC_API_URL + "/v1/trip", 
+    //     { 
+    //       method: "POST" ,
+    //       headers: { 
+    //         "Content-Type": "application/json",
+    //         "Authorization": `Bearer ${getToken()}`
+    //       }, 
+    //       body: JSON.stringify(newTrip)
+    //     });
+
+    //   if (!response.ok) {
+    //     console.error()
+    //     return;
+    //   }
+    //   const data = await response.json();
+    //   // setTrips([...trips, data.trip]);
+      
+      
+    // } catch(error) {
+    //   console.error(error.message);
+    // }
+  }
+
+
   const groupedTrips = useMemo(() => groupByDate(aiTrip), [aiTrip]);
 
   if(loading) return <div>Loading...</div>;
@@ -144,6 +182,7 @@ export default function TripList({setIsMapOpen}) {
           <h1>Your Trip</h1>
           <h2>Total Budget: $$$ ~ $$$</h2>
         </div>
+
         <button
           className="bg-themePink rounded-lg"
           onClick={handleMapBtn}
@@ -163,6 +202,24 @@ export default function TripList({setIsMapOpen}) {
           View Map
         </button>
       </div>
+
+      <button
+          className="bg-themePink rounded-lg"
+          onClick={handleSaveTripBtn}
+          style={{
+            marginLeft: "auto",
+            color: "white",
+            padding: "20px",
+            height: "30px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            alignSelf: "center",
+            marginRight: "50px",
+          }}
+        >
+         Save Trip
+        </button>
 
       {aiTrip.length === 1 && !aiTrip[0].city ? (
         <div
