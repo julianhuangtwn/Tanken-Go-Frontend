@@ -51,6 +51,7 @@
   .askAIButton:hover {
     background-color: #b82658;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);     
   }
   
   .imageSection {
