@@ -5,15 +5,12 @@ import Image from "next/image";
 import AiResponse from "@/components/plan-ai/AiResponse";
 import { useState, useEffect, useRef } from "react";
 import TripMap from "@/components/plan-ai/tripMap";
-import { LoadScript } from "@react-google-maps/api";
 import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
-
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function Page() {
-  //Messages are stored in arrays and only rerender when new messages are added
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState([]);
   const messageAreaRef = useRef(null);
@@ -27,21 +24,18 @@ export default function Page() {
     }
   }, []);
 
-  // Effect to handle API call when new user message is added
   useEffect(() => {
-  //Auto scrolls to the bottom when message is sent and received
     if (messageAreaRef.current) {
       messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
     }
 
-    if (messages.length === 0) return; // Skip if no messages
+    if (messages.length === 0) return;
 
-    // Only make the API call when the user has sent a new message
     const userMessage = messages[messages.length - 1];
     if (userMessage.role === "user") {
-      fetchAIResponse(messages); // Fetch AI response after user message
+      fetchAIResponse(messages);
     }
-  }, [messages]); // This will run whenever messages change
+  }, [messages]);
 
   const fetchAIResponse = async (messages) => {
     try {
@@ -71,11 +65,16 @@ export default function Page() {
         };
 
         setMessages((prevMessages) => {
-          
-          return[...prevMessages, aiMessage]
+          return [...prevMessages, aiMessage];
         });
 
-        setAiTripAtom(()=> data.trip.destinations)
+        setAiTripAtom(() => {
+          data.trip.destinations.forEach((destination, index) => {
+            destination.id = index + 1;
+          });
+
+          console.log("trip in map", data.trip.destinations);
+          return data.trip.destinations});
       } else {
         console.error("Failed to fetch response from backend");
       }
@@ -93,7 +92,7 @@ export default function Page() {
   };
 
   const handleSend = async () => {
-    if (!input.trim()) return; // Prevent empty messages
+    if (!input.trim()) return;
 
     const userMessage = {
       id: messages.length + 1,
@@ -101,106 +100,107 @@ export default function Page() {
       content: input.trim(),
     };
 
-    // Clear input field and add user message to state
     setInput("");
     setMessages((prevMessages) => [...prevMessages, userMessage]);
   };
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "row",
-        maxHeight: "80vh",
-      }}
-    >
-      <div className="h-screen p-4" style={{ width: "50%" }}>
+    <>
         <div
-          className="flex flex-col h-full max-h-full rounded-lg bg-themePink"
-          style={{ width: "100%", maxHeight: "75vh" }}
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "row",
+            maxHeight: "80vh",
+          }}
         >
-          <div
-            ref={messageAreaRef}
-            className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5"
-          >
-            {messages.length === 0 && (
-              <div className="ml-8 m-auto text-white">
-                <h1 className="text-5xl">
-                  Ask Me Anything and Start Planning Your Trip!
-                </h1>
-                <br></br>
-                <p className="text-2xl">Try:</p>
-                <ul>
-                  <li>
-                    I have a budget of $2000, what should I do on a three-day
-                    trip to [destination]?
-                  </li>
-                  <li>
-                    I don’t like crowded places, any suggestions for
-                    [destination]?
-                  </li>
-                  <li>What can I do for a 5 hour layover in [destination]</li>
-                </ul>
-              </div>
-            )}
-
-            {messages.map((message) => (
+          <div className="h-screen p-4" style={{ width: "50%" }}>
+            <div
+              className="flex flex-col h-full max-h-full rounded-lg bg-themePink"
+              style={{ width: "100%", maxHeight: "75vh" }}
+            >
               <div
-                key={message.id}
-                className={`flex max-w-full ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                ref={messageAreaRef}
+                className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5"
               >
-                {message.role === "assistant" && (
-                  <div className="relative min-w-12 max-w-12 h-12 mr-2">
-                    <Image
-                      src={"/AI Icon.png"}
-                      alt="AI Icon"
-                      width={48}
-                      height={48}
-                      className="rounded-full object-contain"
-                    />
+                {messages.length === 0 && (
+                  <div className="ml-8 m-auto text-white">
+                    <h1 className="text-5xl">
+                      Ask Me Anything and Start Planning Your Trip!
+                    </h1>
+                    <br />
+                    <p className="text-2xl">Try:</p>
+                    <ul>
+                      <li>
+                        I have a budget of $2000, what should I do on a three-day
+                        trip to [destination]?
+                      </li>
+                      <li>
+                        I don’t like crowded places, any suggestions for
+                        [destination]?
+                      </li>
+                      <li>What can I do for a 5-hour layover in [destination]</li>
+                    </ul>
                   </div>
                 )}
 
-                <div
-                  className={`break-words p-3 rounded-lg max-w-full ${
-                    message.role === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-300 text-black"
-                  }`}
-                >
-                  {message.role === "assistant" ? (
-                    <AiResponse response={message.content} />
-                  ) : (
-                    <p>{message.content}</p>
-                  )}
-                </div>
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex max-w-full ${
+                      message.role === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    {message.role === "assistant" && (
+                      <div className="relative min-w-12 max-w-12 h-12 mr-2">
+                        <Image
+                          src={"/AI Icon.png"}
+                          alt="AI Icon"
+                          width={48}
+                          height={48}
+                          className="rounded-full object-contain"
+                        />
+                      </div>
+                    )}
+
+                    <div
+                      className={`break-words p-3 rounded-lg max-w-full ${
+                        message.role === "user"
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-300 text-black"
+                      }`}
+                    >
+                      {message.role === "assistant" ? (
+                        <AiResponse response={message.content} />
+                      ) : (
+                        <p>{message.content}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+              <div className="mx-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type your message..."
+                  className="flex-grow p-2 border rounded-lg"
+                />
+                <button
+                  onClick={handleSend}
+                  className="px-2 py-2 bg-blue-500 text-white rounded-lg"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="mx-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-grow p-2 border rounded-lg"
-            />
-            <button
-              onClick={handleSend}
-              className="px-2 py-2 bg-blue-500 text-white rounded-lg"
-            >
-              Send
-            </button>
-          </div>
+
+          
+          <TripList setIsMapOpen={setIsMapOpen} />
+          {isMapOpen && <TripMap />}
         </div>
-      </div>
-      <LoadScript googleMapsApiKey={apiKey}>
-        <TripList setIsMapOpen={setIsMapOpen} />
-        {isMapOpen && <TripMap />}
-      </LoadScript>
-    </div>
+    </>
   );
 }

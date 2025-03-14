@@ -3,15 +3,15 @@ import { ChevronRight, CircleMinus } from "lucide-react";
 import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
 
+
 const IMAGE_WIDTH = 300;
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const imageApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export default function TripList({setIsMapOpen}) {
+export default function TripList({ setIsMapOpen }) {
   const [loading, setLoading] = useState(false);
   const [isMapOpen, setIsMapOpen1] = useState(false);
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,12 +26,14 @@ export default function TripList({setIsMapOpen}) {
         if (!trip.imgUrl) {
           try {
             const response = await fetch(
-              `${imageApiUrl}/v1/image?query=${encodeURIComponent(trip.name)}&orientation=landscape`,
+              `${imageApiUrl}/v1/image?query=${encodeURIComponent(
+                trip.name
+              )}&orientation=landscape`,
               {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
               }
             );
@@ -84,27 +86,29 @@ export default function TripList({setIsMapOpen}) {
 
     if (aiTrip.length > 0) {
       const lastTrip = aiTrip.length - 1;
-      if(aiTrip[lastTrip].imgUrl && aiTrip[lastTrip].latitude && aiTrip[lastTrip].longitude) {
+      if (
+        aiTrip[lastTrip].imgUrl &&
+        aiTrip[lastTrip].latitude &&
+        aiTrip[lastTrip].longitude
+      ) {
         setLoading(false);
-      }
-      else{
+      } else {
         fetchData();
       }
     }
   }, [aiTrip, setAiTripAtom]);
-  
 
   const groupByDate = (trips) => {
     return trips.reduce((acc, trip) => {
       // Check if the trip has a visit_date; use 'unknown date' as fallback
-      const date = trip.visit_date || 'unknown date';
-  
+      const date = trip.visit_date || "unknown date";
+
       // If the date doesn't exist in the accumulator, create an empty array
       if (!acc[date]) acc[date] = [];
-  
+
       // Push the trip to the corresponding date array
       acc[date].push(trip);
-  
+
       // Return the updated accumulator
       return acc;
     }, {}); // Initial value of acc is an empty object {}
@@ -112,10 +116,21 @@ export default function TripList({setIsMapOpen}) {
 
   const handleMapBtn = () => {
     setIsMapOpen1((prev) => {
-      return !prev
+      return !prev;
     });
     setIsMapOpen((prev) => !prev);
-  }
+  };
+
+  const handleOnDelete = (trip) => {
+    console.log("aiTrip", aiTrip);
+    console.log("Delete button clicked", trip);
+
+    setAiTripAtom((prev) => {
+      const newArray = prev.filter((item) => item.name !== trip.name);
+      console.log(newArray);
+      return newArray;
+    });
+  };
 
   // Save Trip
   const handleSaveTripBtn = async () => {
@@ -157,7 +172,7 @@ export default function TripList({setIsMapOpen}) {
 
   const groupedTrips = useMemo(() => groupByDate(aiTrip), [aiTrip]);
 
-  if(loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div
@@ -167,7 +182,7 @@ export default function TripList({setIsMapOpen}) {
         justifyContent: "space-between",
         display: "flex",
         flexDirection: "column",
-        overflowY: 'scroll'
+        overflowY: "scroll",
       }}
     >
       <div
@@ -221,7 +236,7 @@ export default function TripList({setIsMapOpen}) {
          Save Trip
         </button>
 
-      {aiTrip.length === 1 && !aiTrip[0].city ? (
+      {!aiTrip[0]?.city ? (
         <div
           style={{
             margin: "auto",
@@ -250,7 +265,10 @@ export default function TripList({setIsMapOpen}) {
                 <ChevronRight />
                 <h2>{date}</h2>
               </div>
-              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }} key={index}>
+              <div
+                style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}
+                key={index}
+              >
                 {groupedTrips[date].map((trip, index) => (
                   <div
                     key={index}
@@ -263,23 +281,29 @@ export default function TripList({setIsMapOpen}) {
                       flexDirection: "row",
                       display: "flex",
                       gap: "10px",
-                      alignItems: "center"
+                      alignItems: "center",
                     }}
                   >
-                    <CircleMinus />
+                    <button onClick={()=>handleOnDelete(trip)}>
+                      <CircleMinus />
+                    </button>
                     <div style={{ flexDirection: "row", display: "flex" }}>
                       {/* Show image if fetched */}
                       {trip.imgUrl ? (
                         <img
                           src={trip.imgUrl}
                           alt={trip.name}
-                          style={{ width: IMAGE_WIDTH, height:"auto", borderRadius: "5px", objectFit: "contain" }}
-                          
+                          style={{
+                            width: IMAGE_WIDTH,
+                            height: "auto",
+                            borderRadius: "5px",
+                            objectFit: "contain",
+                          }}
                         />
                       ) : (
                         <div>Loading image...</div> // Fallback UI while image is loading
                       )}
-                      <h3 style={{ width: "100%" }}>{trip.name}</h3>
+                      <h3 style={{ width: "100%" }}>{trip.id}. {trip.name}</h3>
                     </div>
                   </div>
                 ))}
