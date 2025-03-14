@@ -1,3 +1,5 @@
+"use client";
+import { useRouter } from "next/navigation";
 import { CLIENT_REFERENCE_MANIFEST } from "next/dist/shared/lib/constants";
 import Image from "next/image";
 import Link from 'next/link'
@@ -5,6 +7,7 @@ import styles from '../app/styles/home.css';
 import { travel } from '../components/ui/fonts'
 
 export default function Home() {
+  const router = useRouter();
   return (
     <div>
       {/* Hero Section */}
@@ -20,7 +23,7 @@ export default function Home() {
         <div className="heroContent">
           <h1 className={`${travel.className} antialiased`}>Tanken-GO</h1>
           <p className="heroSubtitle">Explore more trips for your next trip idea!</p>
-          <Link href='/explore'><button className="heroButton">Start Planning</button></Link>
+          <Link href='/explore'><button className="heroButton">Explore Trips</button></Link>
         </div>
       </div>
 
@@ -31,7 +34,7 @@ export default function Home() {
           Explore inspiring travel plans created by fellow travelers. Discover new destinations, get ideas for your next
           adventure, and customize a plan that suits your style. Start your journey today by browsing through the best trip planners!
         </p>
-        <button className="viewPlansButton">View all trip plans</button>
+        <button className="viewPlansButton" onClick={() => router.push("/community")} >View all trip plans</button>
         <div className="tripCards">
           <div className="tripCard">
             <Image

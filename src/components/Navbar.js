@@ -1,7 +1,7 @@
 // src/components/Navbar.js
 "use client"; // Add this directive at the top of the file
 
-
+import { useState } from "react";
 import Link from 'next/link';
 import { travel } from './ui/fonts'
 
@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 const Navbar = () => {
   const [user, setUser] = useAtom(userAtom);
   const { push } = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false); 
 
   // Logout function
   const handleLogout = () => {
@@ -32,12 +33,16 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
+      <div className="navbar-container">
       <Link href='/'>
         <div className="flex logo items-center">
           <h1 className={`${travel.className} antialiased text-6xl`}>Tanken-GO</h1>
         </div>
       </Link>
-      <ul className="flex items-center nav-links text-center">
+      <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+      </button>
+      <ul className={`nav-links ${menuOpen ? "active" : ""}`}>
         <li>
           <Link href="/">Home</Link>
         </li>
@@ -48,7 +53,7 @@ const Navbar = () => {
           <Link href="/community">Community</Link>
         </li>
         <li>
-          <Link href="/contact">Contact</Link>
+          <Link href="/guide">Guide</Link>
         </li>
         <li>
           <Link href="/account/details">Account</Link>
@@ -66,6 +71,7 @@ const Navbar = () => {
             <button className="account-button"><Link href="/login">Login</Link></button>
           </>
         )}
+      </div>
       </div>
     </nav>
   );
