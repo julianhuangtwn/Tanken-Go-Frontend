@@ -48,8 +48,6 @@ export default function Page() {
   const fetchAIResponse = async (messages) => {
     setLoading(true);
 
-    setLoading(true);
-
     try {
       const formattedMessages = messages.map((msg) => ({
         ...msg,
@@ -97,8 +95,6 @@ export default function Page() {
     }
 
     setLoading(false);
-
-    setLoading(false);
   };
 
   const handleSend = async () => {
@@ -124,7 +120,7 @@ export default function Page() {
         maxHeight: "80vh",
       }}
     >
-      <div className="h-screen p-4" style={{ width: "50%" }}>
+      <div className="h-screen p-4" style={{width: "50%"}}>
         <div
           className="flex flex-col h-full max-h-full rounded-lg bg-themePink"
           style={{ width: "100%", maxHeight: "75vh" }}
@@ -221,34 +217,32 @@ export default function Page() {
           </div>
 
           <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
-            <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
-              <input
-                type="text"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSend();
-                  }
-                }}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-grow p-2 border rounded-lg"
-              />
-              <button
-                onClick={handleSend}
-                className="px-2 py-2 bg-blue-500 text-white rounded-lg"
-              >
-                Send
-              </button>
-            </div>
+            <input
+              type="text"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSend();
+                }
+              }}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-grow p-2 border rounded-lg"
+            />
+            <button
+              onClick={handleSend}
+              className="px-2 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              Send
+            </button>
           </div>
         </div>
-
-        <LoadScript googleMapsApiKey={apiKey}>
-          <TripList setIsMapOpen={setIsMapOpen} />
-          {isMapOpen && <TripMap />}
-        </LoadScript>
       </div>
+
+      <LoadScript googleMapsApiKey={apiKey}>
+        <TripList setIsMapOpen={setIsMapOpen} />
+        {isMapOpen && <TripMap />}
+      </LoadScript>
     </div>
   );
 }
