@@ -16,6 +16,7 @@ export default function Page() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const messageAreaRef = useRef(null);
   const [token, setToken] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -29,12 +30,14 @@ export default function Page() {
 
   // Effect to handle API call when new user message is added
   useEffect(() => {
-  //Auto scrolls to the bottom when message is sent and received
+    //Auto scrolls to the bottom when message is sent and received
     if (messageAreaRef.current) {
       messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
     }
   }, [messages, loading]);
+  }, [messages, loading]);
 
+  useEffect(() => {
   useEffect(() => {
     if (messages.length === 0) return; // Skip if no messages
 
@@ -46,6 +49,8 @@ export default function Page() {
   }, [messages]); // This will run whenever messages change
 
   const fetchAIResponse = async (messages) => {
+    setLoading(true);
+
     setLoading(true);
 
     try {
@@ -75,11 +80,10 @@ export default function Page() {
         };
 
         setMessages((prevMessages) => {
-          
-          return[...prevMessages, aiMessage]
+          return [...prevMessages, aiMessage];
         });
 
-        setAiTripAtom(()=> data.trip.destinations)
+        setAiTripAtom(() => data.trip.destinations);
       } else {
         console.error("Failed to fetch response from backend");
       }
@@ -94,6 +98,8 @@ export default function Page() {
         },
       ]);
     }
+
+    setLoading(false);
 
     setLoading(false);
   };
@@ -121,7 +127,7 @@ export default function Page() {
         maxHeight: "80vh",
       }}
     >
-      <div className="h-screen p-4" style={{ width: "50%" }}>
+      <div className="h-screen p-4" style={{width: "50%"}}>
         <div
           className="flex flex-col h-full max-h-full rounded-lg bg-themePink"
           style={{ width: "100%", maxHeight: "75vh" }}
@@ -211,8 +217,15 @@ export default function Page() {
           </div>
 
           <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
+
+          <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
             <input
               type="text"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSend();
+                }
+              }}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
@@ -227,6 +240,7 @@ export default function Page() {
           </div>
         </div>
       </div>
+
       <LoadScript googleMapsApiKey={apiKey}>
         <TripList setIsMapOpen={setIsMapOpen} />
         {isMapOpen && <TripMap />}

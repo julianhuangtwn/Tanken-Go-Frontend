@@ -91,12 +91,6 @@ h1 {
   }
 }
 
-
-
-*::-webkit-scrollbar {
-  width: 1px;
-}
-
 ul {
   list-style-type: disc; 
   padding-left: 20px;    
