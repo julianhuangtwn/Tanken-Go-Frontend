@@ -1,45 +1,55 @@
+"use client";
 import Link from 'next/link';
+import Image from 'next/image';
+import { useState } from 'react';
+import heartIcon from '../../public/heart.png'; 
 
 const Footer = () => {
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    try {
+      const homeURL = window.location.origin; 
+      await navigator.clipboard.writeText(homeURL); 
+      setCopied(true);
+
+      setTimeout(() => setCopied(false), 5000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   return (
     <footer className="footer">
       <div className="footer-container">
-        <div className="footer-section">
-          <h4>Product</h4>
-          <ul>
-            <li><a href="#">Employee database</a></li>
-            <li><a href="#">Payroll</a></li>
-            <li><a href="#">Absences</a></li>
-            <li><a href="#">Time tracking</a></li>
-            <li><a href="#">Shift planner</a></li>
-            <li><a href="#">Recruiting</a></li>
-          </ul>
+       
+      <div className="footer-links">
+          <div className="footer-link"><Link href="/explore">Start Planning</Link></div>
+          <div className="footer-link"><Link href="/community">Community</Link></div>
+          <div className="footer-link"><Link href="/guide">About Us</Link></div>
+          <div className="footer-link"><Link href="/account">Account</Link></div>
         </div>
-        <div className="footer-section">
-          <h4>Information</h4>
-          <ul>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Support</a></li>
-          </ul>
+
+        <div className="footer-title">
+          <h2 className="animate-title">Tanken-GO</h2>
         </div>
-        <div className="footer-section">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="/about">About us</a></li>
-            <li><Link href="/temas">Teams</Link></li>
-            <li><Link href="/contact">Contact Us</Link></li>
-            <li><a href="#">Lift Media</a></li>
-          </ul>
+
+        <div className="footer-share" onClick={handleShare} style={{ cursor: 'pointer' }}>
+          <Image 
+            src={heartIcon} 
+            alt="Share" 
+            width={50} 
+            height={50} 
+            className={copied ? "bumping-heart" : ""} 
+          />
+          <span>{copied ? 'Link Ready' : 'Share Link!'}</span>
         </div>
       </div>
+
+      <hr className="footer-divider" />
+
       <div className="footer-bottom">
-        <p>© 2025 Tanken-Go. All rights reserved.</p>
-        <ul>
-          <li><a href="#">Terms</a></li>
-          <li><a href="#">Privacy</a></li>
-          <li><a href="#">Cookies</a></li>
-        </ul>
+        <p>© 2025 Tanken-GO. All rights reserved.</p>
       </div>
     </footer>
   );
