@@ -66,7 +66,16 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		animation: {
+			'bounce-strong': 'bounce-strong 1.2s infinite ease-in-out',
+		},
+		keyframes: {
+			'bounce-strong': {
+				'0%, 80%, 100%': { transform: 'translateY(0)' },
+				'40%': { transform: 'translateY(-5px)' }, // Increase height here
+			},
+		},
   	}
   },
   plugins: [require("tailwindcss-animate")],
