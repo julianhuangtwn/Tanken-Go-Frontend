@@ -16,7 +16,6 @@ export default function Page() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
   const messageAreaRef = useRef(null);
   const [token, setToken] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -35,9 +34,7 @@ export default function Page() {
       messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
     }
   }, [messages, loading]);
-  }, [messages, loading]);
 
-  useEffect(() => {
   useEffect(() => {
     if (messages.length === 0) return; // Skip if no messages
 
@@ -127,7 +124,7 @@ export default function Page() {
         maxHeight: "80vh",
       }}
     >
-      <div className="h-screen p-4" style={{width: "50%"}}>
+      <div className="h-screen p-4" style={{ width: "50%" }}>
         <div
           className="flex flex-col h-full max-h-full rounded-lg bg-themePink"
           style={{ width: "100%", maxHeight: "75vh" }}
@@ -161,9 +158,7 @@ export default function Page() {
               <div
                 key={message.id}
                 className={`flex max-w-full ${
-                  message.role === 'assistant'
-                  ? "justify-start"
-                  : "justify-end"
+                  message.role === "assistant" ? "justify-start" : "justify-end"
                 }`}
               >
                 {message.role === "assistant" && (
@@ -207,9 +202,18 @@ export default function Page() {
                 </div>
                 <div className="p-3 rounded-lg bg-gray-300 flex items-center">
                   <div className="flex space-x-1">
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong" style={{ animationDelay: "0s" }}></span>
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong" style={{ animationDelay: "0.2s" }}></span>
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong" style={{ animationDelay: "0.4s" }}></span>
+                    <span
+                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong"
+                      style={{ animationDelay: "0s" }}
+                    ></span>
+                    <span
+                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong"
+                      style={{ animationDelay: "0.2s" }}
+                    ></span>
+                    <span
+                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong"
+                      style={{ animationDelay: "0.4s" }}
+                    ></span>
                   </div>
                 </div>
               </div>
@@ -217,34 +221,34 @@ export default function Page() {
           </div>
 
           <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
-
-          <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
-            <input
-              type="text"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSend();
-                }
-              }}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-grow p-2 border rounded-lg"
-            />
-            <button
-              onClick={handleSend}
-              className="px-2 py-2 bg-blue-500 text-white rounded-lg"
-            >
-              Send
-            </button>
+            <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
+              <input
+                type="text"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSend();
+                  }
+                }}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-grow p-2 border rounded-lg"
+              />
+              <button
+                onClick={handleSend}
+                className="px-2 py-2 bg-blue-500 text-white rounded-lg"
+              >
+                Send
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <LoadScript googleMapsApiKey={apiKey}>
-        <TripList setIsMapOpen={setIsMapOpen} />
-        {isMapOpen && <TripMap />}
-      </LoadScript>
+        <LoadScript googleMapsApiKey={apiKey}>
+          <TripList setIsMapOpen={setIsMapOpen} />
+          {isMapOpen && <TripMap />}
+        </LoadScript>
+      </div>
     </div>
   );
 }
