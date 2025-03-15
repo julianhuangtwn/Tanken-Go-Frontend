@@ -9,13 +9,13 @@ import { LoadScript } from "@react-google-maps/api";
 import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
 
-
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function Page() {
   //Messages are stored in arrays and only rerender when new messages are added
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState([]);
+  const [loading, setLoading] = useState(false);
   const messageAreaRef = useRef(null);
   const [token, setToken] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -33,7 +33,9 @@ export default function Page() {
     if (messageAreaRef.current) {
       messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
     }
+  }, [messages, loading]);
 
+  useEffect(() => {
     if (messages.length === 0) return; // Skip if no messages
 
     // Only make the API call when the user has sent a new message
@@ -44,6 +46,8 @@ export default function Page() {
   }, [messages]); // This will run whenever messages change
 
   const fetchAIResponse = async (messages) => {
+    setLoading(true);
+
     try {
       const formattedMessages = messages.map((msg) => ({
         ...msg,
@@ -90,6 +94,8 @@ export default function Page() {
         },
       ]);
     }
+
+    setLoading(false);
   };
 
   const handleSend = async () => {
@@ -149,7 +155,9 @@ export default function Page() {
               <div
                 key={message.id}
                 className={`flex max-w-full ${
-                  message.role === "user" ? "justify-end" : "justify-start"
+                  message.role === 'assistant'
+                  ? "justify-start"
+                  : "justify-end"
                 }`}
               >
                 {message.role === "assistant" && (
@@ -179,8 +187,30 @@ export default function Page() {
                 </div>
               </div>
             ))}
+
+            {loading && (
+              <div className="flex justify-start">
+                <div className="relative min-w-12 max-w-12 h-12 mr-2">
+                  <Image
+                    src={"/AI Icon.png"}
+                    alt="AI Icon"
+                    width={48}
+                    height={48}
+                    className="rounded-full object-contain"
+                  />
+                </div>
+                <div className="p-3 rounded-lg bg-gray-300 flex items-center">
+                  <div className="flex space-x-1">
+                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong" style={{ animationDelay: "0s" }}></span>
+                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong" style={{ animationDelay: "0.2s" }}></span>
+                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce-strong" style={{ animationDelay: "0.4s" }}></span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="mx-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
+
+          <div className="m-2 pt-4 pb-4 px-3 flex items-center space-x-4 bottom-0 rounded-xl bg-themePinkLight">
             <input
               type="text"
               value={input}
