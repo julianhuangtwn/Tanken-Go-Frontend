@@ -1,6 +1,12 @@
+const showdown = require('showdown')
+const markdownConverter = new showdown.Converter({  
+  tables: true 
+});
+
 const AiResponse = ({ response }) => {  
     if (!response.isTripGenerated) {
-      return <p className="text-gray-600">{response.message}</p>;
+      // Renders the converted HTML to the page
+      return <div className="text-gray-700" dangerouslySetInnerHTML={{ __html: markdownConverter.makeHtml(response.message) }} />;
     }
   
    else {
@@ -20,10 +26,7 @@ const AiResponse = ({ response }) => {
       return (
         <div className="p-4 bg-white shadow-lg rounded-lg">
           {response.message && (
-            <div>
-              <p>{response.message}</p>  
-              <br/>
-            </div>
+            <div dangerouslySetInnerHTML={{ __html: markdownConverter.makeHtml(response.message) }} />
           )}
           <h2 className="text-2xl font-bold">{tripName}</h2>
           <p className="text-gray-600">
