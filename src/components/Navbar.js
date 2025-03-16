@@ -31,7 +31,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between min-h-18 m-2" >
+    <nav className="flex items-center justify-between min-h-18 p-2 shadow-md" >
       <Link href='/'>
         <div className="flex items-center font-bold mr-10">
           <h1 className={`${travel.className} antialiased text-5xl`}>Tanken-GO</h1>
