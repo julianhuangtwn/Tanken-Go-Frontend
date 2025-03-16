@@ -111,20 +111,11 @@ export default function Page() {
     setMessages((prevMessages) => [...prevMessages, userMessage]);
   };
 
+
   return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "row",
-        maxHeight: "80vh",
-      }}
-    >
-      <div className="h-screen p-4" style={{width: "50%"}}>
-        <div
-          className="flex flex-col h-full max-h-full rounded-lg bg-themePink"
-          style={{ width: "100%", maxHeight: "75vh" }}
-        >
+    <div className="flex flex-row flex-grow h-screen">
+      <div className="h-screen p-4 w-1/2">
+        <div className="flex flex-col h-full max-h-full rounded-lg bg-themePink">
           <div
             ref={messageAreaRef}
             className="pt-4 pl-4 pr-4 flex flex-col flex-grow overflow-auto space-y-5"
