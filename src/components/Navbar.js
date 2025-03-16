@@ -1,7 +1,7 @@
 // src/components/Navbar.js
 "use client"; // Add this directive at the top of the file
 
-
+import { useState } from "react";
 import Link from 'next/link';
 import { travel } from './ui/fonts'
 
@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 const Navbar = () => {
   const [user, setUser] = useAtom(userAtom);
   const { push } = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false); 
 
   // Logout function
   const handleLogout = () => {
@@ -56,6 +57,7 @@ const Navbar = () => {
             <button className="rounded-lg text-themePink text-lg font-bold px-6 py-3 border-themePink border-2"><Link href="/login">Login</Link></button>
           </>
         )}
+      </div>
       </div>
     </nav>
   );

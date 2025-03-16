@@ -78,7 +78,13 @@ export default function Page() {
           return [...prevMessages, aiMessage];
         });
 
-        setAiTripAtom(() => data.trip.destinations);
+        setAiTripAtom(() => {
+          data.trip.destinations.forEach((destination, index) => {
+            destination.id = index + 1;
+          });
+
+          console.log("trip in map", data.trip.destinations);
+          return data.trip.destinations});
       } else {
         console.error("Failed to fetch response from backend");
       }
@@ -98,7 +104,7 @@ export default function Page() {
   };
 
   const handleSend = async () => {
-    if (!input.trim()) return; // Prevent empty messages
+    if (!input.trim()) return;
 
     const userMessage = {
       id: messages.length + 1,
@@ -106,7 +112,6 @@ export default function Page() {
       content: input.trim(),
     };
 
-    // Clear input field and add user message to state
     setInput("");
     setMessages((prevMessages) => [...prevMessages, userMessage]);
   };
