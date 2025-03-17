@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+
 import { AuthProvider } from "@/context/AuthContext"; // ✅ Import Auth Context
 import "./styles/navbar.css";
 import "./styles/footer.css";

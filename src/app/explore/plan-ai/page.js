@@ -16,7 +16,12 @@ export default function Page() {
   const messageAreaRef = useRef(null);
   const [token, setToken] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
+
+  // Destinations Generated from AI
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
+
+  // My Trip Generated from AI 
+  const [myTrip, setMyTrip] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -67,6 +72,8 @@ export default function Page() {
         setMessages((prevMessages) => {
           return [...prevMessages, aiMessage];
         });
+
+        setMyTrip(data.trip);
 
         setAiTripAtom(() => {
           data.trip.destinations.forEach((destination, index) => {
@@ -198,7 +205,7 @@ export default function Page() {
           </div>
 
           
-          <TripList setIsMapOpen={setIsMapOpen} />
+          <TripList setIsMapOpen={setIsMapOpen} myTrip={myTrip}/>
           {isMapOpen && <TripMap />}
         </div>
     </>

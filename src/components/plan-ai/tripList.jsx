@@ -2,13 +2,17 @@ import React, { useEffect, useState, useMemo } from "react";
 import { ChevronRight, CircleMinus } from "lucide-react";
 import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
+import { getToken } from "@/lib/authenticate";
+import { toast } from "sonner"
+
 
 
 const IMAGE_WIDTH = 300;
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const imageApiUrl = process.env.NEXT_PUBLIC_API_URL;
+const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export default function TripList({ setIsMapOpen }) {
+export default function TripList({ setIsMapOpen, myTrip }) {
   const [loading, setLoading] = useState(false);
   const [isMapOpen, setIsMapOpen1] = useState(false);
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
@@ -134,39 +138,36 @@ export default function TripList({ setIsMapOpen }) {
 
   // Save Trip
   const handleSaveTripBtn = async () => {
-    console.log(aiTrip);
-    // Dummy Data 
     const newTrip = {
-      tripName: "New Trip",
-      startDate: "2022-12-01",
-      endDate: "2022-12-15",
-      totalCostEstimate: 1000,
-      isPublic: "N",
+      tripName: myTrip.tripName,
+      startDate: myTrip.startDate,
+      endDate: myTrip.endDate,
+      totalCostEstimate: myTrip.totalCostEstimate,
+      isPublic: myTrip.isPublic ? "Y" : "N",
+      destinations: aiTrip
     };
 
-    
-    // try {
-    //   const response = await fetch(NEXT_PUBLIC_API_URL + "/v1/trip", 
-    //     { 
-    //       method: "POST" ,
-    //       headers: { 
-    //         "Content-Type": "application/json",
-    //         "Authorization": `Bearer ${getToken()}`
-    //       }, 
-    //       body: JSON.stringify(newTrip)
-    //     });
+    try {
+      const response = await fetch(publicApiUrl + "/v1/trip", 
+        { 
+          method: "POST" ,
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+          }, 
+          body: JSON.stringify(newTrip)
+        });
 
-    //   if (!response.ok) {
-    //     console.error()
-    //     return;
-    //   }
-    //   const data = await response.json();
-    //   // setTrips([...trips, data.trip]);
+      if (!response.ok) {
+        console.error()
+        return;
+      }
+
+      toast("Trip saved!")
       
-      
-    // } catch(error) {
-    //   console.error(error.message);
-    // }
+    } catch(error) {
+      console.error(error.message);
+    }
   }
 
 
@@ -194,8 +195,8 @@ export default function TripList({ setIsMapOpen }) {
         }}
       >
         <div style={{ marginLeft: "20px" }}>
-          <h1>Your Trip</h1>
-          <h2>Total Budget: $$$ ~ $$$</h2>
+          <h1 className="text-5xl mt-4">{myTrip ? myTrip.tripName : "Your Trip"}</h1>
+          <h2 className="mt-4">{myTrip ? "Total Estimated Cost: $" + myTrip.totalCostEstimate : "Total Estimated Cost"}</h2>
         </div>
 
         <button
