@@ -235,10 +235,10 @@ export default function Page() {
         </div>
       </div>
 
-      <LoadScript googleMapsApiKey={apiKey}>
+      {/* <LoadScript googleMapsApiKey={apiKey}> */}
         <TripList setIsMapOpen={setIsMapOpen} />
         {isMapOpen && <TripMap />}
-      </LoadScript>
+      {/* </LoadScript> */}
     </div>
   );
 }
