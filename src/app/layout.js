@@ -2,9 +2,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 import { AuthProvider } from "@/context/AuthContext"; // ✅ Import Auth Context
-import "./styles/navbar.css";
-import "./styles/footer.css";
-import "./globals.css";
+import './styles/footer.css';
+import './globals.css';
 
 import RouteGuard from "@/components/RouteGuard";
 import JotaiProvider from "@/components/JotaiProvider";

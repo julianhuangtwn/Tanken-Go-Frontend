@@ -75,7 +75,10 @@ export default function TripMap() {
   console.log("trip in map",aiTrip)
   const center =
     aiTrip[0]?.latitude && aiTrip[0]?.longitude
-      ? { lat: aiTrip[0].latitude, lng: aiTrip[0].longitude }
+      ? { 
+          lat: parseFloat(aiTrip[0].latitude), 
+          lng: parseFloat(aiTrip[0].longitude) 
+        }
       : { lat: 0, lng: 0 };
   return (
     <div>
@@ -86,10 +89,18 @@ export default function TripMap() {
           zoom={12}
         >
           {aiTrip.map((aiTrip, index) => {
+            const lat = parseFloat(aiTrip.latitude);
+            const long = parseFloat(aiTrip.longitude);
+
+            if (isNaN(lat) || isNaN(long)) {
+              console.log("Invalid coordinates for trip:");
+              console.log(aiTrip);
+              return null;
+            }
             return (
               <Marker
                 key={index}
-                position={{ lat: aiTrip.latitude, lng: aiTrip.longitude }}
+                position={{ lat: lat, lng: long }}
                 icon={{
                   url: MAP_MARKER_ICON[index],
                   // size: new window.google.maps.Size(30, 40),
