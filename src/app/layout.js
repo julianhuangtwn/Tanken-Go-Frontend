@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 
 import { AuthProvider } from "@/context/AuthContext"; // ✅ Import Auth Context
 import './styles/footer.css';
+import './styles/navbar.css';
 import './globals.css';
 
 import RouteGuard from "@/components/RouteGuard";
