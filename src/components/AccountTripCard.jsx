@@ -54,7 +54,7 @@ const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
             <p>Total Cost Estimate: ${trip.totalCostEstimate}</p>
             </CardContent>
             <CardFooter className="flex justify-between items-center">
-                <Link href={`/account/saved-trips/${trip.tripId}`}>
+                <Link href={`/community/${trip.tripId}`} className="text-blue-500 font-semibold">
                     <p>Click for more details</p>
                 </Link>
 

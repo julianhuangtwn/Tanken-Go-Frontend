@@ -243,7 +243,7 @@ export default function Page() {
       </div>
 
       {/* <LoadScript googleMapsApiKey={apiKey}> */}
-        <TripList setIsMapOpen={setIsMapOpen} />
+        <TripList setIsMapOpen={setIsMapOpen} myTrip={myTrip} />
         {isMapOpen && <TripMap />}
       {/* </LoadScript> */}
     </div>
