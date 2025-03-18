@@ -2,16 +2,26 @@ import React, { useEffect, useState, useMemo } from "react";
 import { ChevronRight, CircleMinus } from "lucide-react";
 import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
+import { getToken } from "@/lib/authenticate";
+import { toast } from "sonner"
 
+import { useRouter } from 'next/navigation'
+
+
+import { SaveTripBtn } from "@/components/SaveTripBtn";
 
 const IMAGE_WIDTH = 300;
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const imageApiUrl = process.env.NEXT_PUBLIC_API_URL;
+const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export default function TripList({ setIsMapOpen }) {
+
+export default function TripList({ setIsMapOpen, myTrip }) {
   const [loading, setLoading] = useState(false);
   const [isMapOpen, setIsMapOpen1] = useState(false);
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,6 +142,44 @@ export default function TripList({ setIsMapOpen }) {
     });
   };
 
+  // Save Trip
+  const handleSaveTripBtn = async (isPublic) => {
+    const newTrip = {
+      tripName: myTrip.tripName,
+      startDate: myTrip.startDate,
+      endDate: myTrip.endDate,
+      totalCostEstimate: myTrip.totalCostEstimate,
+      isPublic: isPublic,
+      destinations: aiTrip
+    };
+
+    try {
+      const response = await fetch(publicApiUrl + "/v1/trip", 
+        { 
+          method: "POST" ,
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+          }, 
+          body: JSON.stringify(newTrip)
+        });
+
+      if (!response.ok) {
+        console.error()
+        return;
+      }
+
+      toast("✅ Trip saved!")
+      // Redirect to saved trips page
+      router.push("/account/saved-trips");
+
+      
+    } catch(error) {
+      console.error(error.message);
+    }
+  }
+
+
   const groupedTrips = useMemo(() => groupByDate(aiTrip), [aiTrip]);
 
   if (loading) return <div>Loading...</div>;
@@ -156,9 +204,10 @@ export default function TripList({ setIsMapOpen }) {
         }}
       >
         <div style={{ marginLeft: "20px" }}>
-          <h1>Your Trip</h1>
-          <h2>Total Budget: $$$ ~ $$$</h2>
+          <h1 className="text-3xl font-bold font-sans mt-4">{myTrip ? myTrip.tripName : "Your Trip"}</h1>
+          <h2 className="mt-4">{myTrip ? "Total Estimated Cost: $" + myTrip.totalCostEstimate : "Total Estimated Cost"}</h2>
         </div>
+
         <button
           className="bg-themePink rounded-lg"
           onClick={handleMapBtn}
@@ -173,11 +222,42 @@ export default function TripList({ setIsMapOpen }) {
             justifyContent: "center",
             alignSelf: "center",
             marginRight: "50px",
+            fontSize: "14px",
           }}
         >
           View Map
         </button>
       </div>
+
+      {aiTrip[0]?.city ? (
+      // <button
+      //     className="bg-themePink rounded-lg"
+      //     onClick={handleSaveTripBtn}
+      //     style={{
+      //       marginLeft: "auto",
+      //       color: "white",
+      //       padding: "20px",
+      //       height: "30px",
+      //       display: "flex",
+      //       alignItems: "center",
+      //       justifyContent: "center",
+      //       alignSelf: "center",
+      //       marginRight: "50px",
+      //     }}
+      //   >
+      //    Save Trip
+      //   </button>
+        <div style={{ 
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          marginRight: "50px",
+
+        }}>
+          <SaveTripBtn handleSaveTripBtn={handleSaveTripBtn} />
+        </div>
+      ) : null
+      }
 
       {!aiTrip[0]?.city ? (
         <div
