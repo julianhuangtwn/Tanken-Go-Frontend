@@ -1,0 +1,151 @@
+/* Navbar Container */
+.navbar {
+  width: 100%;
+  position: relative;
+  padding: 10px 20px;
+  background-color: white; /* White background */
+  border-bottom: 1px solid #ddd; /* Subtle border at the bottom */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.logo h1 {
+  font-size: 45px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  justify-content: center; /* Center the links */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  font-family: 'Roboto', sans-serif;
+  margin: 0 20px; /* Corrected spacing */
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #333; /* Neutral color for links */
+  font-weight: 500; /* Medium weight */
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.nav-links li.active a {
+  color: #d6336c; /* Pink color for the active page */
+  font-weight: bold; /* Bold for emphasis */
+}
+
+.nav-links li a:hover {
+  color: #d6336c; /* Hover color matches active link */
+}
+
+/* Right Section (Buttons) */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between buttons */
+}
+
+/* Start Button */
+.start-button, .account-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-button {
+  background-color: #d6336c;
+  color: white;
+  border: none;
+}
+
+.start-button:hover {
+  background-color: #b82658;
+}
+
+/* Account Button */
+.account-button {
+  border: 1px solid #d6336c; /* Pink border */
+  background-color: white; /* White background */
+  color: #d6336c; /* Pink text */
+}
+
+.account-button:hover {
+  background-color: #d6336c;
+  color: white;
+}
+
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #333;
+}
+
+@media screen and (max-width: 768px) {
+
+  .logo h1 {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+  }
+  
+  .navbar-container {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 15px;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 10px 0;
+    z-index: 1000;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links li {
+    margin: 10px 0;
+  }
+
+  .nav-right {
+    display: none; 
+  }
+
+  .hamburger {
+    display: block; 
+  }
+}
