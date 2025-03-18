@@ -102,7 +102,7 @@ export default function TripMap() {
                 key={aiTrip.id}
                 position={{ lat: lat, lng: long }}
                 icon={{
-                  url: MAP_MARKER_ICON[aiTrip.id],
+                  url: MAP_MARKER_ICON[aiTrip.id-1],
                   // size: new window.google.maps.Size(30, 40),
                   // scaledSize: new window.google.maps.Size(30, 30),
                 }}
