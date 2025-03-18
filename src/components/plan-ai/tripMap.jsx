@@ -84,7 +84,7 @@ export default function TripMap() {
     <div>
       <LoadScriptNext googleMapsApiKey={apiKey}>
         <GoogleMap
-          mapContainerStyle={{ width: "30vw", height: "80vh" }}
+          mapContainerStyle={{ width: "30vw", height: "100vh" }}
           center={center}
           zoom={12}
         >
@@ -102,7 +102,7 @@ export default function TripMap() {
                 key={aiTrip.id}
                 position={{ lat: lat, lng: long }}
                 icon={{
-                  url: MAP_MARKER_ICON[aiTrip.id-1],
+                  url: MAP_MARKER_ICON[aiTrip.id],
                   // size: new window.google.maps.Size(30, 40),
                   // scaledSize: new window.google.maps.Size(30, 30),
                 }}
