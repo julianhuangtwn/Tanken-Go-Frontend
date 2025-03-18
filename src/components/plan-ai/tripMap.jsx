@@ -99,10 +99,10 @@ export default function TripMap() {
             }
             return (
               <Marker
-                key={index}
+                key={aiTrip.id}
                 position={{ lat: lat, lng: long }}
                 icon={{
-                  url: MAP_MARKER_ICON[index],
+                  url: MAP_MARKER_ICON[aiTrip.id],
                   // size: new window.google.maps.Size(30, 40),
                   // scaledSize: new window.google.maps.Size(30, 30),
                 }}
