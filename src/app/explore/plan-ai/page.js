@@ -37,6 +37,7 @@ export default function Page() {
     }
   }, []);
 
+  // For edit trip, the tripId will be passed in the url as a query (/explore/plan-ai?tripId=127)
   useEffect(() => {
     if (tripId) {
       const fetchTripData = async () => {
@@ -54,6 +55,7 @@ export default function Page() {
             const data = await response.json();
             const tripData = data.data.data[0];
 
+            // Restructure the fetched data JSON
             const cleanedTripResponse = {
               trip: {
                 tripName: tripData.tripName,
