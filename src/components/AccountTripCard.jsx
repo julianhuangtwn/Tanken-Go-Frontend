@@ -16,13 +16,18 @@ import Link from "next/link"
 import { useAtom } from "jotai"
 import { tripsAtom } from "@/lib/tripsAtom"
 import { getToken } from "@/lib/authenticate"
+import { redirect } from 'next/navigation'
   
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
 
   export default function AccountTripCard({ trip }) {
     const [ trips, setTrips] = useAtom(tripsAtom);
-    
+
+    const handleEdit = () => {
+        redirect(`/explore/plan-ai?tripId=${trip.tripId}`);
+    }
+
     const handleDelete = async () => {
         try {
             const response = await fetch(`${NEXT_PUBLIC_API_URL}/v1/trip/${trip.tripId}`, {
@@ -57,6 +62,10 @@ const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
                 <Link href={`/community/${trip.tripId}`} className="text-blue-500 font-semibold">
                     <p>Click for more details</p>
                 </Link>
+
+                <Button variant="outline" className="bg-themePink text-white" onClick={handleEdit}>
+                    Edit
+                </Button>
 
                 <Button variant="outline" onClick={handleDelete}>
                     <Trash2 />
