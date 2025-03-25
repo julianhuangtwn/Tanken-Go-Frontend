@@ -8,6 +8,8 @@ import TripMap from "@/components/plan-ai/tripMap";
 import { LoadScript } from "@react-google-maps/api";
 import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
+import { useSearchParams } from 'next/navigation';
+import { getToken } from "@/lib/authenticate"
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -26,11 +28,87 @@ export default function Page() {
   // My Trip Generated from AI 
   const [myTrip, setMyTrip] = useState(null);
 
+  const searchParams = useSearchParams();
+  const tripId = searchParams.get('tripId');
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       setToken(localStorage.getItem("token"));
     }
   }, []);
+
+  useEffect(() => {
+    if (tripId) {
+      const fetchTripData = async () => {
+        setLoading(true);
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/trips/public/${tripId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${getToken()}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const tripData = data.data.data[0];
+
+            const cleanedTripResponse = {
+              trip: {
+                tripName: tripData.tripName,
+                startDate: tripData.startDate,
+                endDate: tripData.endDate, 
+                totalCostEstimate: tripData.totalCostEstimate,
+                isPublic: tripData.isPublic, 
+                destinations: []
+              },
+              message: "How would you like to edit this trip? Here is the current trip: ",
+              isTripGenerated: true 
+            };
+        
+            // Add destinations from tripData
+            tripData.destinationsByDay && Object.keys(tripData.destinationsByDay).forEach(date => {
+              tripData.destinationsByDay[date].forEach(destination => {
+                cleanedTripResponse.trip.destinations.push({
+                  name: destination.destinationName,
+                  description: destination.description, 
+                  city: destination.city,
+                  country: destination.country,
+                  coordinates: destination.coordinates,
+                  category: destination.category,
+                  visit_date: destination.visitDate
+                });
+              });
+            });
+
+            setAiTripAtom(() => {
+              cleanedTripResponse.trip.destinations.forEach((destination, index) => {
+                destination.id = index + 1;
+              });
+    
+              return cleanedTripResponse.trip.destinations
+            });
+
+            // Return the cleaned-up response            
+            const aiMessage = {
+              id: messages.length + 1,
+              role: 'assistant',
+              content: cleanedTripResponse, // Set fetched trip data as the assistant's message
+            };
+            setMessages([aiMessage]);
+          } else {
+            console.error('Failed to fetch trip data');
+          }
+        } catch (error) {
+          console.error('Error fetching trip data:', error);
+        }
+        setLoading(false);
+      };
+
+      fetchTripData();
+    }
+  }, [tripId, token]);
 
   // Effect to handle API call when new user message is added
   useEffect(() => {
