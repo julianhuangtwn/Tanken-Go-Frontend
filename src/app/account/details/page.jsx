@@ -121,7 +121,7 @@ export default function Page() {
 
           <Link href="/forgot-password">
             <p className="mt-2 text-sm text-blue-500 underline hover:text-blue-700">
-              Forgot Password
+              Change Password
             </p>
           </Link>
         </div>

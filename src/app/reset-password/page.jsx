@@ -14,7 +14,6 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [status, setStatus] = useState("");
 
-  // ✅ Password validation logic
   const validatePassword = (password) =>
     password.length >= 8 &&
     /[A-Z]/.test(password) &&
@@ -59,7 +58,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center py-24 px-4">
       <div className="flex flex-col gap-4 max-w-sm w-full mx-auto px-6 py-10 bg-white rounded-lg shadow">
-        <h1 className="text-2xl font-bold font-roboto">Reset Password</h1>
+        <h1 className="text-2xl font-bold font-roboto">Change Password</h1>
 
         <Input
           type="password"
@@ -67,7 +66,6 @@ export default function ResetPasswordPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {/* ✅ Password rules */}
         {password && (
           <ul className="text-sm text-gray-600 list-disc ml-6">
             {password.length < 8 && <li className="text-red-500">At least 8 characters</li>}
@@ -86,7 +84,6 @@ export default function ResetPasswordPage() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
-        {/* ✅ Password match error */}
         {password && confirmPassword && !passwordsMatch && (
           <p className="text-red-500 text-sm">Passwords do not match</p>
         )}
