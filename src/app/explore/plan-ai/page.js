@@ -55,6 +55,8 @@ export default function Page() {
             const data = await response.json();
             const tripData = data.data.data[0];
 
+            setMyTrip(tripData);
+
             // Restructure the fetched data JSON
             const cleanedTripResponse = {
               trip: {
