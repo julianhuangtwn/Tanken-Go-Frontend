@@ -136,6 +136,7 @@ export default function TripList({ setIsMapOpen, myTrip }) {
   const handleOnDelete = (trip) => {
     console.log("aiTrip", aiTrip);
     console.log("Delete button clicked", trip);
+    console.log("my trip", myTrip);
 
     setAiTripAtom((prev) => {
       const newArray = prev.filter((item) => item.name !== trip.name);
@@ -146,16 +147,19 @@ export default function TripList({ setIsMapOpen, myTrip }) {
 
   // Save Trip
   const handleSaveTripBtn = async (isPublic) => {
+    
+    
     const newTrip = {
-      tripName: myTrip.tripName,
-      startDate: myTrip.startDate,
-      endDate: myTrip.endDate,
-      totalCostEstimate: myTrip.totalCostEstimate,
-      isPublic: isPublic,
+      tripName: myTrip?.tripName,
+      startDate: myTrip?.startDate,
+      endDate: myTrip?.endDate,
+      totalCostEstimate: myTrip?.totalCostEstimate,
+      isPublic: isPublic?'Y':'N',
       destinations: aiTrip
     };
 
     try {
+      console.log(myTrip)
       const response = await fetch(publicApiUrl + "/v1/trip", 
         { 
           method: "POST" ,
