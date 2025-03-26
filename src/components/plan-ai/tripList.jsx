@@ -150,10 +150,10 @@ export default function TripList({ setIsMapOpen, myTrip }) {
     
     
     const newTrip = {
-      tripName: myTrip?.tripName,
-      startDate: myTrip?.startDate,
-      endDate: myTrip?.endDate,
-      totalCostEstimate: myTrip?.totalCostEstimate,
+      tripName: myTrip.tripName,
+      startDate: myTrip.startDate,
+      endDate: myTrip.endDate,
+      totalCostEstimate: myTrip.totalCostEstimate,
       isPublic: isPublic?'Y':'N',
       destinations: aiTrip
     };
