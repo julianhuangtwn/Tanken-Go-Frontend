@@ -93,24 +93,22 @@ export function LoginForm({
 
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
-        // if (user.isLoggedIn) {
-        //     push('/account');
-        // }
         const storedToken = getToken();
-        if (storedToken) {
-            const tokenData = readToken();
-            setUser({
-                isLoggedIn: true,
-                id: tokenData.id,
-                fullName: tokenData.fullName,
-                email: tokenData.email,
-                phone: tokenData.phone,
-            })
-            push('/account/details');
-        } else {
-            console.log("No token found.")
+        const currentPath = window.location.pathname;
+      
+        if (storedToken && currentPath === "/login") {
+          const tokenData = readToken();
+          setUser({
+            isLoggedIn: true,
+            id: tokenData.id,
+            fullName: tokenData.fullName,
+            email: tokenData.email,
+            phone: tokenData.phone,
+          });
+          push('/account/details');
         }
-     }, [setUser]);
+      }, [setUser]);
+      
 
     // 4. Handle form submission
     const onSubmit = async (data) => {
@@ -179,7 +177,7 @@ export function LoginForm({
                             <div className="flex items-center justify-between">
                                 <FormLabel>Password</FormLabel>
                                 <Link
-                                href="./forgot-password"
+                                href="/forgot-password"
                                 className="ml-auto text-sm underline-offset-4 hover:underline"
                                 >
                                 Forgot your password?

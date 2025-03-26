@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 import { isAuthenticated } from '@/lib/authenticate';
 
-const PUBLIC_PATHS = ['/login', '/', '/register','/_error'];
+const PUBLIC_PATHS = ['/login', '/',  '/forgot-password', '/reset-password',  '/register','/_error'];
 
 export default function RouteGuard({ children }) {
   const router = useRouter();
