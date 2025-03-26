@@ -5,6 +5,8 @@ import { useAtom } from "jotai";
 import { getToken } from "@/lib/authenticate";
 import { toast } from "sonner"
 
+import Image from "next/image";
+
 import { useRouter } from 'next/navigation'
 
 
@@ -209,14 +211,12 @@ export default function TripList({ setIsMapOpen, myTrip }) {
         </div>
 
         <button
-          className="bg-themePink rounded-lg"
+          className="bg-themePink rounded-lg px-4 py-2"
           onClick={handleMapBtn}
           style={{
             marginLeft: "auto",
             marginRight: "20px",
             color: "white",
-            padding: "20px",
-            height: "30px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -286,47 +286,50 @@ export default function TripList({ setIsMapOpen, myTrip }) {
                 }}
               >
                 <ChevronRight />
-                <h2>{date}</h2>
+                <h2 className="text-lg font-bold">{date}</h2>
               </div>
               <div
                 style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}
                 key={index}
               >
                 {groupedTrips[date].map((trip, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      border: "1px solid #ccc",
-                      padding: "10px",
-                      borderRadius: "8px",
-                      minWidth: "90%",
-                      marginLeft: "30px",
-                      flexDirection: "row",
-                      display: "flex",
-                      gap: "10px",
-                      alignItems: "center",
-                    }}
-                  >
-                    <button onClick={()=>handleOnDelete(trip)}>
-                      <CircleMinus />
-                    </button>
-                    <div style={{ flexDirection: "row", display: "flex" }}>
-                      {/* Show image if fetched */}
-                      {trip.imgUrl ? (
-                        <img
-                          src={trip.imgUrl}
-                          alt={trip.name}
-                          style={{
-                            width: IMAGE_WIDTH,
-                            height: "auto",
-                            borderRadius: "5px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      ) : (
-                        <div>Loading image...</div> // Fallback UI while image is loading
-                      )}
-                      <h3 style={{ width: "100%" }}>{trip.id}. {trip.name}</h3>
+                  <div key={index} className="flex flex-row ml-8 w-full">
+                    <h3 className='flex text-lg justify-center items-center'>{trip.id}.</h3>
+                    <div
+                      key={index}
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        minWidth: "90%",
+                        marginLeft : "10px",
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <button className="flex items-center" onClick={()=>handleOnDelete(trip)}>
+                        <CircleMinus />
+                      </button>
+                      <div style={{ flexDirection: "row", display: "flex" }}>
+                        {/* Show image if fetched */}
+                        <div style={{ position: "relative", width: "150px", height: "100px", overflow: "hidden", flexShrink: 0  }}>
+                          {trip.imgUrl ? (
+                            <Image 
+                              fill
+                              src={trip.imgUrl}
+                              alt={trip.name}
+                              style={{
+                                objectFit: "cover",
+                              }}
+                              className={'rounded-lg'}
+                            />   
+                          ) : (
+                            <div>Loading image...</div> // Fallback UI while image is loading
+                          )}
+                        </div>
+                        <h3 className="flex text-xl ml-4 justify-center items-center">{trip.name}</h3>
+                      </div>
                     </div>
                   </div>
                 ))}
