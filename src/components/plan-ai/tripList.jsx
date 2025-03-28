@@ -134,20 +134,39 @@ export default function TripList({ setIsMapOpen, myTrip }) {
   };
 
   const handleOnDelete = (trip) => {
-    console.log("aiTrip", aiTrip);
-    console.log("Delete button clicked", trip);
-    console.log("my trip", myTrip);
-
     setAiTripAtom((prev) => {
       const newArray = prev.filter((item) => item.name !== trip.name);
-      console.log(newArray);
       return newArray;
     });
   };
 
   // Save Trip
   const handleSaveTripBtn = async (isPublic) => {
-    
+    const timeString = 'T00:00:00'
+    const lastTrip = aiTrip.length - 1;
+
+    let minDate = new Date(aiTrip[0].visit_date + timeString) //convert from string to timestamp
+    let maxDate = new Date(aiTrip[lastTrip].visit_date + timeString) //convert from string to timestamp
+
+    aiTrip.forEach((trip) => {
+      let currDate = new Date(trip.visit_date + timeString)
+      minDate = Math.min(currDate, minDate)
+      maxDate = Math.max(currDate, maxDate)
+    });
+
+    minDate = new Date(minDate); // convert to Date object
+    maxDate = new Date(maxDate); // convert to Date object
+
+
+    // Format date to YYYY-MM-DD
+    const formattedDateMin = minDate.toISOString().split('T')[0];
+    const formattedDateMax = maxDate.toISOString().split('T')[0];
+
+    myTrip.startDate = formattedDateMin;
+    myTrip.endDate = formattedDateMax;
+
+
+    console.log(myTrip.startDate, myTrip.endDate)
     
     const newTrip = {
       tripName: myTrip.tripName,
