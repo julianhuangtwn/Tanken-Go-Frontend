@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import CommentSection from "@/components/CommentSection";
 import Image from 'next/image';
+
+{/* Button for share CODE*/}
 import heartIcon from '../../../../public/heart.png'; 
 
 const ShareModal = ({ isOpen, onClose }) => {
@@ -54,8 +56,11 @@ const ShareModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
+{/* Button for share CODE END*/}
 
 const TripDetailPage = () => {
+
+  {/* Button for share CODE*/}
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -124,6 +129,7 @@ const TripDetailPage = () => {
           <p className="text-sm text-gray-500">Curated by <span className="font-semibold text-indigo-600 hover:underline cursor-pointer">{trip.username}</span></p>
         </div>
 
+        {/* Trip Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-8">
           <div className="bg-gray-50 p-6 rounded-2xl shadow-sm">
             <p className="text-2xl font-bold text-gray-800">${trip.totalCostEstimate}</p>
@@ -139,6 +145,7 @@ const TripDetailPage = () => {
           </div>
         </div>
 
+        {/* Itinerary Section */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">✨ Itinerary</h2>
           {Object.entries(trip.destinationsByDay).map(([date, destinations], idx) => (
@@ -206,7 +213,7 @@ const TripDetailPage = () => {
               </div>
             </div>
           ))}
-
+            {/* Button for share CODE*/}
           <div className="sharebtn mt-10 flex flex-col items-center" onClick={handleShareClick} style={{ cursor: 'pointer' }}>
             <Image 
               src={heartIcon} 
@@ -219,7 +226,8 @@ const TripDetailPage = () => {
           </div>
           <ShareModal isOpen={modalOpen} onClose={handleCloseModal} />
         </div>
-
+            
+        {/* Comments Section */}
         <div className="bg-white rounded-lg shadow p-6 mt-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Comments</h2>
           <CommentSection tripId={tripId} />
