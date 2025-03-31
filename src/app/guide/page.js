@@ -249,9 +249,10 @@ export default function Page() {
                 onClick={() => router.push(`/community/${trip.tripId}`)}
               >
                 <img 
-                  src={`https://source.unsplash.com/400x300/?travel,${trip.tripId}`} 
+                  src={trip.imageUrl || "/default_trip.png"} 
                   alt={trip.tripName} 
-                  className="w-full h-40 object-cover"
+                  className="w-full h-40 object-cover" 
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h3 className="font-semibold text-lg">{trip.tripName}</h3>
