@@ -74,6 +74,10 @@ export default function Page() {
         const durationB = new Date(b.endDate) - new Date(b.startDate);
         return durationB - durationA;
       });
+    } else if (option === "newestToOldest") {
+      sortedTrips.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    } else if (option === "oldestToNewest") {
+      sortedTrips.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
     }
 
     setFilteredTrips(sortedTrips);
@@ -122,8 +126,10 @@ export default function Page() {
               <option value="">Sort by</option>
               <option value="lowToHigh">💰 Budget: Low to High</option>
               <option value="highToLow">💰 Budget: High to Low</option>
-              <option value="shortestToLongest">📆 Duration: Shortest to Longest</option>
-              <option value="longestToShortest">📆 Duration: Longest to Shortest</option>
+              <option value="newestToOldest">📆 Date: Newest to Oldest</option>
+              <option value="oldestToNewest">📆 Date: Oldest to Newest</option>
+              <option value="shortestToLongest">🗓 Duration: Shortest to Longest</option>
+              <option value="longestToShortest">🗓 Duration: Longest to Shortest</option>
             </select>
           </div>
         </div>
@@ -141,16 +147,22 @@ export default function Page() {
                 className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
                 onClick={() => router.push(`/community/${trip.tripId}`)}
               >
-                <img
-                  src={`https://source.unsplash.com/400x300/?travel,${trip.tripId}`}
-                  alt={trip.tripName}
-                  className="w-full h-40 object-cover"
-                />
-                <div className="p-4">
+              <img
+                src={trip.imageUrl || "/default_trip.png"}
+                alt={trip.tripName}
+                className="w-full h-[200px] object-cover rounded-t-lg"
+              />
+              <div className="p-4 flex flex-col justify-between h-full">
+                <div>
                   <h2 className="font-semibold text-lg">{trip.tripName}</h2>
-                  <p className="text-gray-500 text-sm">🗓 {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</p>
-                  <p className="text-gray-600 font-semibold">💰 ${trip.totalCostEstimate}</p>
+                  <p className="text-gray-500 text-sm">
+                    🗓 {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
+                  </p>
+                  <p className="text-gray-600 font-semibold mt-1">💰 ${trip.totalCostEstimate}</p>
+                  <p className="text-gray-600 font-semibold mt-1">📍 {trip.city}, {trip.country}</p>
                 </div>
+
+              </div>
               </div>
             ))
           ) : (
