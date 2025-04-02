@@ -7,6 +7,7 @@ import Image from 'next/image';
 
 {/* Button for share CODE*/}
 import heartIcon from '../../../../public/heart.png'; 
+import { LoadScriptNext, GoogleMap, Marker } from "@react-google-maps/api";
 
 const ShareModal = ({ isOpen, onClose }) => {
   const [copied, setCopied] = useState(false);
@@ -58,6 +59,9 @@ const ShareModal = ({ isOpen, onClose }) => {
 };
 {/* Button for share CODE END*/}
 
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+
 const TripDetailPage = () => {
 
   {/* Button for share CODE*/}
@@ -74,6 +78,8 @@ const TripDetailPage = () => {
 
   const { tripId } = useParams();
   const [trip, setTrip] = useState(null);
+  const [tripRaw, setTripRaw] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
   const [status, setStatus] = useState({ loading: true, error: null });
 
   useEffect(() => {
@@ -101,28 +107,68 @@ const TripDetailPage = () => {
             ? Math.ceil((new Date(tripData.endDate) - new Date(tripData.startDate)) / (1000 * 60 * 60 * 24)) + 1
             : 0;
 
-          setTrip({
+
+          setTripRaw(()=>({
             ...tripData,
             duration,
             username: tripData.username || 'Anonymous',
             destinationsByDay: tripData.destinationsByDay || {},
-          });
+          }));
+
+          const groupByDate = (trips) => {
+            return trips.reduce((acc, trip) => {
+              // Check if the trip has a visit_date; use 'unknown date' as fallback
+              const date = trip.visitDate || "unknown date";
+        
+              // If the date doesn't exist in the accumulator, create an empty array
+              if (!acc[date]) acc[date] = [];
+        
+              // Push the trip to the corresponding date array
+              acc[date].push(trip);
+        
+              // Return the updated accumulator
+              return acc;
+            }, {}); // Initial value of acc is an empty object {}
+          };
+
+          let sortByDate = groupByDate(tripData.destinationsByDay)
+
+          setTrip({
+            ...tripData,
+            duration,
+            username: tripData.username || 'Anonymous',
+            destinationsByDay: sortByDate,
+          })
+
+
         }
       } catch (error) {
         setStatus({ loading: false, error: 'Failed to load trip details. Please try again later.' });
       } finally {
         setStatus({ loading: false });
+
       }
     })();
   }, [tripId]);
+
+  useEffect(() => {
+    if (tripRaw?.destinationsByDay && tripRaw.destinationsByDay.length > 0) {
+      setMapCenter({
+        lat: tripRaw.destinationsByDay[0].latitude,
+        lng: tripRaw.destinationsByDay[0].longitude
+      });
+    }
+  }, [tripRaw]); // This effect runs whenever tripRaw changes
 
   if (status.loading) return <div className="text-center text-lg font-semibold animate-pulse">Loading...</div>;
   if (status.error) return <div className="text-center text-red-500 font-bold">{status.error}</div>;
   if (!trip) return <div className="text-center text-gray-500 italic">No trip information available.</div>;
 
+  console.log(tripRaw)
+
   return (
     <div className="min-h-screen bg-white py-12">
-      <div className="max-w-6xl mx-auto px-4">
+            <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-6">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-2">{trip.tripName}</h1>
           <p className="text-sm text-gray-500 mb-1">📅 {trip.startDate} - {trip.endDate}</p>
@@ -213,6 +259,65 @@ const TripDetailPage = () => {
               </div>
             </div>
           ))}
+
+          {/*google map*/}
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">🗺️ Map</h2>
+            <LoadScriptNext googleMapsApiKey={apiKey}>
+              <GoogleMap
+                        mapContainerStyle={{ width: "100%", height: "40vh" }}
+                        center={mapCenter}
+                        zoom={12}
+                        options={{
+                          styles: [
+                            {
+                              featureType: "poi", // Hide all points of interest
+                              elementType: "labels",
+                              stylers: [{ visibility: "off" }]
+                            },
+                            {
+                              featureType: "poi.business", // Hide business labels
+                              elementType: "labels",
+                              stylers: [{ visibility: "off" }]
+                            },
+                            {
+                              featureType: "poi.park", // Hide park labels
+                              elementType: "labels",
+                              stylers: [{ visibility: "off" }]
+                            },
+                          ],
+                        }}
+                        >
+{tripRaw.destinationsByDay.map((data, index) => {
+            const lat = parseFloat(data.latitude);
+            const long = parseFloat(data.longitude);
+
+            console.log("data", data)
+
+            if (isNaN(lat) || isNaN(long)) {
+              console.log("Invalid coordinates for trip:");
+              console.log(data);
+              return null;
+            }
+            return (
+              <Marker
+                key={index}
+                position={{ lat: lat, lng: long }}
+                title={data.destinationName}
+                label={{
+                  text: data.destinationName, // Display location name
+                  color: "#5C4033", // Change text color
+                  fontSize: "14px", // Change font size
+                  fontWeight: "bold", // Make text bold
+                }}
+                
+              />
+            );
+          })}
+              </GoogleMap>
+            </LoadScriptNext>
+          </div>
+
             {/* Button for share CODE*/}
           <div className="sharebtn mt-10 flex flex-col items-center" onClick={handleShareClick} style={{ cursor: 'pointer' }}>
             <Image 
