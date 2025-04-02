@@ -87,6 +87,25 @@ export default function TripMap() {
           mapContainerStyle={{ width: "30vw", height: "100vh" }}
           center={center}
           zoom={12}
+          options={{
+            styles: [
+              {
+                featureType: "poi", // Hide all points of interest
+                elementType: "labels",
+                stylers: [{ visibility: "off" }]
+              },
+              {
+                featureType: "poi.business", // Hide business labels
+                elementType: "labels",
+                stylers: [{ visibility: "off" }]
+              },
+              {
+                featureType: "poi.park", // Hide park labels
+                elementType: "labels",
+                stylers: [{ visibility: "off" }]
+              },
+            ],
+          }}
         >
           {aiTrip.map((aiTrip, index) => {
             const lat = parseFloat(aiTrip.latitude);
