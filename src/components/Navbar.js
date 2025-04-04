@@ -1,14 +1,14 @@
 // src/components/Navbar.js
 "use client"; // Add this directive at the top of the file
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from 'next/link';
 import { travel } from './ui/fonts'
 
 // Atom
 import { useAtom } from 'jotai';
 import { userAtom } from '@/lib/userAtom';
-import { removeToken } from '@/lib/authenticate';
+import { getToken, readToken, isAuthenticated, removeToken } from '@/lib/authenticate';
 
 import { useRouter } from 'next/navigation';
 
@@ -17,6 +17,29 @@ const Navbar = () => {
   const [user, setUser] = useAtom(userAtom);
   const { push } = useRouter();
   const [menuOpen, setMenuOpen] = useState(false); 
+
+  useEffect(() => {
+    const token = getToken();
+    if (token && isAuthenticated()) {
+      const decodedToken = readToken();
+      setUser({
+        isLoggedIn: true,
+        id: decodedToken.id,
+        fullName: decodedToken.fullName,
+        email: decodedToken.email,
+        phone: decodedToken.phone,
+      });
+    }
+    else {
+      setUser({
+        isLoggedIn: false, 
+        id: null,
+        fullName: null,
+        email: null,
+        phone: null,
+      });
+    }
+  }, []);
 
   // Logout function
   const handleLogout = () => {

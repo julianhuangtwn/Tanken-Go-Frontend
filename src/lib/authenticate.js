@@ -56,5 +56,13 @@ export function readToken() {
 
 export function isAuthenticated() {
     const token = readToken();
-    return token ? true : false;
+    if (!token) return false;
+
+    // Check if the token is expired
+    if (token.exp * 1000 < Date.now()) {
+        removeToken(); // Remove expired token
+        return false;
+    }
+
+    return true;
 }
