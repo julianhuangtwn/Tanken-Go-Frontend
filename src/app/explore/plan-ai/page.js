@@ -37,6 +37,11 @@ export default function Page() {
     }
   }, []);
 
+  useEffect(() => {
+    // Clear the aiTripAtom on first page load
+    setAiTripAtom([]);
+  }, []);
+
   // For edit trip, the tripId will be passed in the url as a query (/explore/plan-ai?tripId=127)
   useEffect(() => {
     if (tripId) {
