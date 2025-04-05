@@ -21,6 +21,7 @@ export default function Page() {
   const messageAreaRef = useRef(null);
   const [token, setToken] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [containerHeight, setContainerHeight] = useState('calc(100vh - 64px)');
 
   // Destinations Generated from AI
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
@@ -32,15 +33,30 @@ export default function Page() {
   const tripId = searchParams.get('tripId');
 
   useEffect(() => {
+    // Clear the aiTripAtom on first page load
+    setAiTripAtom([]);
+    
     if (typeof window !== "undefined") {
       setToken(localStorage.getItem("token"));
     }
   }, []);
 
+  // Dynamically calculate the navbar height to fit chatbox into viewport
   useEffect(() => {
-    // Clear the aiTripAtom on first page load
-    setAiTripAtom([]);
-  }, []);
+    const updateHeight = () => {
+      const navbar = document.querySelector('nav'); // adjust selector to match your navbar
+      if (navbar) {
+        const navbarHeight = navbar.offsetHeight;
+        setContainerHeight(`calc(100vh - ${navbarHeight}px)`);
+      }
+    };
+
+    // Initial calculation
+    updateHeight();
+
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  })
 
   // For edit trip, the tripId will be passed in the url as a query (/explore/plan-ai?tripId=127)
   useEffect(() => {
@@ -59,7 +75,7 @@ export default function Page() {
           if (response.ok) {
             const data = await response.json();
             const tripData = data.data.data[0];
-
+            
             setMyTrip(tripData);
 
             // Restructure the fetched data JSON
@@ -77,24 +93,25 @@ export default function Page() {
             };
         
             // Add destinations from tripData
-            tripData.destinationsByDay && Object.keys(tripData.destinationsByDay).forEach(date => {
-              tripData.destinationsByDay[date].forEach(destination => {
-                cleanedTripResponse.trip.destinations.push({
-                  name: destination.destinationName,
-                  description: destination.description, 
-                  city: destination.city,
-                  country: destination.country,
-                  coordinates: destination.coordinates,
-                  category: destination.category,
-                  visit_date: destination.visitDate
-                });
+            tripData.destinationsByDay.forEach(destination => {
+              cleanedTripResponse.trip.destinations.push({
+                name: destination.destinationName,
+                description: destination.description, 
+                city: destination.city,
+                country: destination.country,
+                coordinates: destination.coordinates,
+                category: destination.category,
+                visit_date: destination.visitDate
               });
             });
+            
 
             setAiTripAtom(() => {
               cleanedTripResponse.trip.destinations.forEach((destination, index) => {
                 destination.id = index + 1;
               });
+
+              console.log(cleanedTripResponse);
     
               return cleanedTripResponse.trip.destinations
             });
@@ -212,8 +229,8 @@ export default function Page() {
 
 
   return (
-    <div className="flex flex-row flex-grow h-screen">
-      <div className="h-screen p-4 w-1/2">
+    <div className="flex flex-row flex-grow" style={{ height: containerHeight }}>
+      <div className=" p-4 w-1/2">
         <div className="flex flex-col h-full max-h-full rounded-lg bg-themePink">
           <div
             ref={messageAreaRef}
