@@ -173,12 +173,11 @@ export default function TripList({ setIsMapOpen, myTrip }) {
       startDate: myTrip.startDate,
       endDate: myTrip.endDate,
       totalCostEstimate: myTrip.totalCostEstimate,
-      isPublic: isPublic?'Y':'N',
+      isPublic: isPublic,
       destinations: aiTrip
     };
 
     try {
-      console.log(myTrip)
       const response = await fetch(publicApiUrl + "/v1/trip", 
         { 
           method: "POST" ,
