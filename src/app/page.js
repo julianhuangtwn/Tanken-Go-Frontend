@@ -1,13 +1,50 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { CLIENT_REFERENCE_MANIFEST } from "next/dist/shared/lib/constants";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from 'next/link'
-import styles from '../app/styles/home.css';
-import { travel } from '../components/ui/fonts'
+import Link from "next/link";
+import styles from "../app/styles/home.css"; // if you need your custom styles
+import { travel } from "../components/ui/fonts";
 
 export default function Home() {
   const router = useRouter();
+
+  // --- Added for "Start to Explore" ---
+  const [trips, setTrips] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // We fetch the 3 most recent public trips, similar to your guide page
+    const fetchTrips = async () => {
+      try {
+        const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const response = await fetch(`${NEXT_PUBLIC_API_URL}/v1/trips/public`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          },
+        });
+
+        const data = await response.json();
+        if (data?.status === "ok" && Array.isArray(data.data)) {
+          setTrips(data.data.slice(0, 3));
+        } else {
+          setError("Unexpected API response.");
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError("Failed to fetch trips.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrips();
+  }, []);
+  // --- End "Start to Explore" additions ---
+
   return (
     <div>
       {/* Hero Section */}
@@ -15,7 +52,7 @@ export default function Home() {
         <div className="overlay"></div>
         <Image
           src="/home.png"
-          alt="Hero Background" 
+          alt="Hero Background"
           fill
           quality={100}
           className="heroImage opacity-50 object-cover"
@@ -23,7 +60,9 @@ export default function Home() {
         <div className="heroContent">
           <h1 className={`${travel.className} antialiased`}>Tanken-GO</h1>
           <p className="heroSubtitle">Explore more trips for your next trip idea!</p>
-          <Link href='/explore'><button className="heroButton">Explore Trips</button></Link>
+          <Link href="/explore">
+            <button className="heroButton">Explore Trips</button>
+          </Link>
         </div>
       </div>
 
@@ -32,49 +71,62 @@ export default function Home() {
         <h2 className="sectionTitle">Trip Planners</h2>
         <p className="sectionSubtitle">
           Explore inspiring travel plans created by fellow travelers. Discover new destinations, get ideas for your next
-          adventure, and customize a plan that suits your style. Start your journey today by browsing through the best trip planners!
+          adventure, and customize a plan that suits your style. Start your journey today!
         </p>
-        <button className="viewPlansButton" onClick={() => router.push("/community")} >View all trip plans</button>
-        <div className="tripCards">
-          <div className="tripCard">
-            <Image
-              src="/Colosseo.png"
-              alt="Rome"
-              width={300}
-              height={200}
-              className="tripCardImage"
-            />
-            <h3 className="tripCardTitle">Rome</h3>
-            <p className="tripPrice">€70/Day</p>
-            <p className="tripDuration">5 Days Tour</p>
-          </div>
-          <div className="tripCard">
-            <Image
-              src="/eiffel.png"
-              alt="Paris"
-              width={300}
-              height={200}
-              className="tripCardImage"
-            />
-            <h3 className="tripCardTitle">Paris City Tour</h3>
-            <p className="tripPrice">€99/Day</p>
-            <p className="tripDuration">7 Days Tour</p>
-          </div>
-          <div className="tripCard">
-            <Image
-              src="/madrid.png"
-              alt="Madrid"
-              width={300}
-              height={200}
-              className="tripCardImage"
-            />
-            <h3 className="tripCardTitle">Madrid</h3>
-            <p className="tripPrice">€50/Day</p>
-            <p className="tripDuration">3 Days Tour</p>
-          </div>
-        </div>
+        <button className="viewPlansButton" onClick={() => router.push("/community")}>
+          View all trip plans
+        </button>
+        
       </div>
+      {/* ---------- “Start to Explore” section copied from guide/page.js ---------- */}
+      <div className="explore-section bg-gray-200 text-white py-10 px-6 rounded-lg shadow-md text-center mt-12 max-w-3xl mx-auto mb-16">
+        <h2 className="sectionTitle">Explore shared trips</h2>
+        <p className="sectionSubtitle">
+          Find the best travel experiences shared by our community and start planning your next adventure!
+        </p>
 
+        {loading && <p className="text-white mt-4">Loading trips...</p>}
+        {error && <p className="text-red-300 mt-4">{error}</p>}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          {!loading && !error && trips.length > 0 ? (
+            trips.map((trip) => (
+              <div
+                key={trip.tripId}
+                className="bg-white text-gray-900 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
+                onClick={() => router.push(`/community/${trip.tripId}`)}
+              >
+                <img
+                  src={trip.imageUrl || "/default_trip.png"}
+                  alt={trip.tripName}
+                  className="w-full h-40 object-cover"
+                  loading="lazy"
+                />
+                <div className="p-4">
+                  <h3 className="font-semibold text-lg">{trip.tripName}</h3>
+                  <p className="text-gray-600 text-sm">
+                    🕒{" "}
+                    {trip.startDate && trip.endDate
+                      ? Math.ceil(
+                          (new Date(trip.endDate) - new Date(trip.startDate)) /
+                            (1000 * 60 * 60 * 24)
+                        )
+                      : "N/A"}{" "}
+                    Days
+                  </p>
+                  <p className="text-gray-700 font-semibold">
+                    💰 ${trip.totalCostEstimate}
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-white mt-4">No trips available</p>
+          )}
+        </div>
+
+        
+      </div>
+     
       {/* Traveler's Experiences Section */}
       <div className="travelersExperiences">
         <h2 className="sectionTitle">Traveler’s Experiences</h2>
@@ -89,11 +141,11 @@ export default function Home() {
               className="profileImg"
             />
           </div>
+          
           <div className="feedbackContent">
             <p className="feedbackText">
               Using Tanken GO made planning my trip so much easier! The personalized itinerary suggestions and the
-              user-friendly interface saved me a lot of time and stress. I loved being able to customize everything
-              to my preferences, and the entire process felt seamless. Highly recommend Tanken GO!
+              user-friendly interface saved me a lot of time and stress.
             </p>
             <div className="feedbackRating">
               <span>⭐⭐⭐⭐⭐</span>
@@ -102,6 +154,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+
+      {/* ---------- End “Start to Explore” Section ---------- */}
     </div>
   );
 }
