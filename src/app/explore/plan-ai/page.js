@@ -33,11 +33,15 @@ export default function Page() {
   const tripId = searchParams.get('tripId');
 
   useEffect(() => {
+    // Clear the aiTripAtom on first page load
+    setAiTripAtom([]);
+    
     if (typeof window !== "undefined") {
       setToken(localStorage.getItem("token"));
     }
   }, []);
 
+  // Dynamically calculate the navbar height to fit chatbox into viewport
   useEffect(() => {
     const updateHeight = () => {
       const navbar = document.querySelector('nav'); // adjust selector to match your navbar
