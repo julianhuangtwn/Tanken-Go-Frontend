@@ -216,7 +216,7 @@ const TripDetailPage = () => {
                     <div className="p-4 space-y-2">
                       <h4 className="text-lg font-bold text-indigo-700 hover:underline">
                         <a
-                          href={`https://www.google.com/maps?q=${dest.coordinates}`}
+                          href={`https://www.google.com/maps?q=${dest.latitude},${dest.longitude}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -232,6 +232,7 @@ const TripDetailPage = () => {
                             ${
                               {
                                 'Historical Site': 'bg-blue-600',
+                                'Historical': 'bg-blue-600',
                                 'Landmark': 'bg-yellow-600',
                                 'Cultural Landmark': 'bg-yellow-500',
                                 'Cultural': 'bg-yellow-500',
