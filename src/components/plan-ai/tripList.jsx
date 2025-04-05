@@ -317,7 +317,7 @@ export default function TripList({ setIsMapOpen, myTrip }) {
               >
                 {groupedTrips[date].map((trip, index) => (
                   <div key={index} className="flex flex-row ml-8 w-full">
-                    <h3 className='flex text-lg justify-center items-center'>{trip.id}.</h3>
+                    <h3 className='flex text-lg justify-center items-center' style={{ width: "2ch", minWidth: "2ch"}}>{trip.id}.</h3>
                     <div
                       key={index}
                       style={{
