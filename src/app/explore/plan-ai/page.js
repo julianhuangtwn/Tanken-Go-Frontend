@@ -24,6 +24,7 @@ export default function Page() {
   const [containerHeight, setContainerHeight] = useState('calc(100vh - 64px)');
 
   // Destinations Generated from AI
+  
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
 
   // My Trip Generated from AI 
@@ -39,7 +40,7 @@ export default function Page() {
     if (typeof window !== "undefined") {
       setToken(localStorage.getItem("token"));
     }
-  }, []);
+  }, [setAiTripAtom]);
 
   // Dynamically calculate the navbar height to fit chatbox into viewport
   useEffect(() => {
