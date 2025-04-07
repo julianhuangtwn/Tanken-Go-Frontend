@@ -6,7 +6,6 @@ import CommentSection from "@/components/CommentSection";
 import Image from 'next/image';
 
 {/* Button for share CODE*/}
-import heartIcon from '../../../../public/heart.png'; 
 import { LoadScriptNext, GoogleMap, Marker } from "@react-google-maps/api";
 
 const ShareModal = ({ isOpen, onClose }) => {
@@ -321,7 +320,7 @@ const TripDetailPage = () => {
             {/* Button for share CODE*/}
           <div className="sharebtn mt-10 flex flex-col items-center" onClick={handleShareClick} style={{ cursor: 'pointer' }}>
             <Image 
-              src={heartIcon} 
+              src="/heart.png"
               alt="Share" 
               width={50} 
               height={50} 
