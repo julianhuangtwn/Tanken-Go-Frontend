@@ -34,7 +34,7 @@ export default function Page() {
           setError("Unexpected API response structure.");
         }
       } catch (err) {
-        console.error("Fetch error:", err);
+        //console.error("Fetch error:", err);
         setError("Error fetching trips.");
       } finally {
         setLoading(false);

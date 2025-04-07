@@ -19,7 +19,7 @@ export default function Home() {
     const fetchTrips = async () => {
       try {
         const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const response = await fetch(`${NEXT_PUBLIC_API_URL}/v1/trips/public`, {
+        const response = await fetch(`${NEXT_PUBLIC_API_URL}/fetchPublicTrips`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
