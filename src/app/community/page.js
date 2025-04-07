@@ -88,53 +88,53 @@ export default function Page() {
       <div className="max-w-6xl mx-auto">
         
         {/* Header + Search Bar + Combined Filter */}
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Public Trips</h1>
-
-          <div className="flex space-x-4">
-            {/* Search Bar */}
-            <div className="relative w-72">
-              <svg
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-pink-500"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-4.35-4.35M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"
-                />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search trips..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="w-full pl-10 pr-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 placeholder-gray-400 transition-all"
-              />
-            </div>
-
-            {/* Combined Sorting Dropdown (Budget + Duration) */}
-            <select
-              onChange={(e) => handleSort(e.target.value)}
-              value={sortOption}
-              className="px-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 cursor-pointer"
-            >
-              <option value="">Sort by</option>
-              <option value="lowToHigh">💰 Budget: Low to High</option>
-              <option value="highToLow">💰 Budget: High to Low</option>
-              <option value="newestToOldest">📆 Date: Newest to Oldest</option>
-              <option value="oldestToNewest">📆 Date: Oldest to Newest</option>
-              <option value="shortestToLongest">🗓 Duration: Shortest to Longest</option>
-              <option value="longestToShortest">🗓 Duration: Longest to Shortest</option>
-            </select>
-          </div>
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold">Community</h1>
+          <p className="text-gray-600 mt-2">Discover exciting trips shared by the community.</p>
         </div>
 
-        <p className="text-gray-600 text-center mt-2">Discover exciting trips shared by the community.</p>
+        <div className="flex justify-end items-center gap-4 mt-8 mb-6 flex-wrap">
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-72">
+            <svg
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-pink-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search trips..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full pl-10 pr-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 placeholder-gray-400 transition-all"
+            />
+          </div>
+
+          {/* Sort Dropdown */}
+          <select
+            onChange={(e) => handleSort(e.target.value)}
+            value={sortOption}
+            className="px-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 cursor-pointer"
+          >
+            <option value="">Sort by</option>
+            <option value="lowToHigh">💰 Budget: Low to High</option>
+            <option value="highToLow">💰 Budget: High to Low</option>
+            <option value="newestToOldest">📆 Date: Newest to Oldest</option>
+            <option value="oldestToNewest">📆 Date: Oldest to Newest</option>
+            <option value="shortestToLongest">🗓 Duration: Shortest to Longest</option>
+            <option value="longestToShortest">🗓 Duration: Longest to Shortest</option>
+          </select>
+        </div>
+
 
         {error && <p className="text-center text-red-500">{error}</p>}
         {loading ? <p className="text-center">Loading...</p> : null}
