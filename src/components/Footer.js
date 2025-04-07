@@ -35,7 +35,7 @@ const Footer = () => {
 
         <div className="footer-share" onClick={handleShare} style={{ cursor: 'pointer' }}>
           <Image 
-            src=".heart.png"
+            src="/heart.png"
             alt="Share" 
             width={50} 
             height={50} 
