@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import heartIcon from '../../public/heart.png'; 
 
 const Footer = () => {
   const [copied, setCopied] = useState(false);
@@ -36,7 +35,7 @@ const Footer = () => {
 
         <div className="footer-share" onClick={handleShare} style={{ cursor: 'pointer' }}>
           <Image 
-            src={heartIcon} 
+            src=".heart.png"
             alt="Share" 
             width={50} 
             height={50} 
