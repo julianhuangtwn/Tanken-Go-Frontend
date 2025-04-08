@@ -156,7 +156,7 @@ export default function Page() {
                 <div>
                   <h2 className="font-semibold text-lg">{trip.tripName}</h2>
                   <p className="text-gray-500 text-sm">
-                    🗓 {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
+                    🗓 {trip.startDate.substring(0, 10).replaceAll('-', '/')} - {trip.endDate.substring(0, 10).replaceAll('-', '/')}
                   </p>
                   <p className="text-gray-600 font-semibold mt-1">💰 ${trip.totalCostEstimate}</p>
                   <p className="text-gray-600 font-semibold mt-1">📍 {trip.city}, {trip.country}</p>
