@@ -1,32 +1,32 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from 'next/image';
 
 export default function Page() {
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState(""); // Single sorting state
+  const [sortOption, setSortOption] = useState("");
+  const [currency, setCurrency] = useState("USD");
+  const [exchangeRates, setExchangeRates] = useState({ USD: 1 });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;    
+        const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
         const response = await fetch(`${NEXT_PUBLIC_API_URL}/v1/trips/public`, {
           method: "GET",
           headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          }
-      });
-        const data = await response.json();
-        
-        console.log("API Response:", data);
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
+        const data = await response.json();
         if (data?.status === "ok" && Array.isArray(data.data)) {
           setTrips(data.data);
           setFilteredTrips(data.data);
@@ -34,7 +34,6 @@ export default function Page() {
           setError("Unexpected API response structure.");
         }
       } catch (err) {
-        //console.error("Fetch error:", err);
         setError("Error fetching trips.");
       } finally {
         setLoading(false);
@@ -44,7 +43,20 @@ export default function Page() {
     fetchTrips();
   }, []);
 
-  // Handle search filtering
+  useEffect(() => {
+    const fetchExchangeRates = async () => {
+      try {
+        const response = await fetch(process.env.NEXT_PUBLIC_EXCHANGE_RATE_API);
+        const data = await response.json();
+        setExchangeRates(data.conversion_rates);
+      } catch (err) {
+        console.error("Error fetching exchange rates:", err);
+      }
+    };
+
+    fetchExchangeRates();
+  }, []);
+
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -53,7 +65,6 @@ export default function Page() {
     );
   };
 
-  // Handle sorting (both budget & duration)
   const handleSort = (option) => {
     setSortOption(option);
     let sortedTrips = [...filteredTrips];
@@ -63,17 +74,17 @@ export default function Page() {
     } else if (option === "highToLow") {
       sortedTrips.sort((a, b) => b.totalCostEstimate - a.totalCostEstimate);
     } else if (option === "shortestToLongest") {
-      sortedTrips.sort((a, b) => {
-        const durationA = new Date(a.endDate) - new Date(a.startDate);
-        const durationB = new Date(b.endDate) - new Date(b.startDate);
-        return durationA - durationB;
-      });
+      sortedTrips.sort(
+        (a, b) =>
+          new Date(a.endDate) - new Date(a.startDate) -
+          (new Date(b.endDate) - new Date(b.startDate))
+      );
     } else if (option === "longestToShortest") {
-      sortedTrips.sort((a, b) => {
-        const durationA = new Date(a.endDate) - new Date(a.startDate);
-        const durationB = new Date(b.endDate) - new Date(b.startDate);
-        return durationB - durationA;
-      });
+      sortedTrips.sort(
+        (a, b) =>
+          new Date(b.endDate) - new Date(b.startDate) -
+          (new Date(a.endDate) - new Date(a.startDate))
+      );
     } else if (option === "newestToOldest") {
       sortedTrips.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
     } else if (option === "oldestToNewest") {
@@ -86,14 +97,14 @@ export default function Page() {
   return (
     <div className="min-h-screen px-6 py-12 bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        
-        {/* Header + Search Bar + Combined Filter */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold">Community</h1>
-          <p className="text-gray-600 mt-2">Discover exciting trips shared by the community.</p>
+          <p className="text-gray-600 mt-2">
+            Discover exciting trips shared by the community.
+          </p>
         </div>
 
-        <div className="flex justify-end items-center gap-4 mt-8 mb-6 flex-wrap">
+        <div className="flex flex-wrap justify-end items-center gap-4 mt-8 mb-6">
           {/* Search Bar */}
           <div className="relative w-full sm:w-72">
             <svg
@@ -115,7 +126,7 @@ export default function Page() {
               placeholder="Search trips..."
               value={searchQuery}
               onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 placeholder-gray-400 transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 placeholder-gray-400"
             />
           </div>
 
@@ -133,42 +144,61 @@ export default function Page() {
             <option value="shortestToLongest">🗓 Duration: Shortest to Longest</option>
             <option value="longestToShortest">🗓 Duration: Longest to Shortest</option>
           </select>
-        </div>
 
+          {/* Currency Dropdown */}
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            className="px-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 cursor-pointer"
+          >
+            {Object.keys(exchangeRates).map((cur) => (
+              <option key={cur} value={cur}>
+                {cur}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {error && <p className="text-center text-red-500">{error}</p>}
-        {loading ? <p className="text-center">Loading...</p> : null}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-          {filteredTrips.length > 0 ? (
-            filteredTrips.map((trip) => (
-              <div 
-                key={trip.tripId} 
-                className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
-                onClick={() => router.push(`/community/${trip.tripId}`)}
-              >
-              <img
-                src={trip.imageUrl || "/default_trip.png"}
-                alt={trip.tripName}
-                className="w-full h-[200px] object-cover rounded-t-lg"
-              />
-              <div className="p-4 flex flex-col justify-between h-full">
-                <div>
-                  <h2 className="font-semibold text-lg">{trip.tripName}</h2>
-                  <p className="text-gray-500 text-sm">
-                    🗓 {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-600 font-semibold mt-1">💰 ${trip.totalCostEstimate}</p>
-                  <p className="text-gray-600 font-semibold mt-1">📍 {trip.city}, {trip.country}</p>
+        {loading ? (
+          <p className="text-center">Loading...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+            {filteredTrips.length > 0 ? (
+              filteredTrips.map((trip) => (
+                <div
+                  key={trip.tripId}
+                  className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
+                  onClick={() => router.push(`/community/${trip.tripId}`)}
+                >
+                  <img
+                    src={trip.imageUrl || "/default_trip.png"}
+                    alt={trip.tripName}
+                    className="w-full h-[200px] object-cover rounded-t-lg"
+                  />
+                  <div className="p-4 flex flex-col justify-between h-full">
+                    <div>
+                      <h2 className="font-semibold text-lg">{trip.tripName}</h2>
+                      <p className="text-gray-500 text-sm">
+                        🗓 {new Date(trip.startDate).toLocaleDateString()} -{" "}
+                        {new Date(trip.endDate).toLocaleDateString()}
+                      </p>
+                      <p className="text-gray-600 font-semibold mt-1">
+                        💰 {currency}{" "}
+                        ${(trip.totalCostEstimate * (exchangeRates[currency] || 1))}
+                      </p>
+                      <p className="text-gray-600 font-semibold mt-1">
+                        📍 {trip.city}, {trip.country}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-
-              </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500">No public trips available</p>
-          )}
-        </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500">No public trips available</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
