@@ -1,33 +1,33 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+
 
 export default function Page() {
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState("");
-  const [currency, setCurrency] = useState("CAD");  // Default currency
-  const [exchangeRates, setExchangeRates] = useState({ USD: 1 });
+  const [sortOption, setSortOption] = useState(""); // Single sorting state
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currency, setCurrency] = useState("CAD"); // Default currency
+  const [exchangeRates, setExchangeRates] = useState({ CAD: 1 });
   const router = useRouter();
-
-
 
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;    
         const response = await fetch(`${NEXT_PUBLIC_API_URL}/v1/trips/public`, {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          }
+      });
         const data = await response.json();
+        
+        console.log("API Response:", data);
 
         if (data?.status === "ok" && Array.isArray(data.data)) {
           setTrips(data.data);
@@ -36,6 +36,7 @@ export default function Page() {
           setError("Unexpected API response structure.");
         }
       } catch (err) {
+        //console.error("Fetch error:", err);
         setError("Error fetching trips.");
       } finally {
         setLoading(false);
@@ -45,19 +46,22 @@ export default function Page() {
     fetchTrips();
   }, []);
 
+  // Fetch exchange rates
   useEffect(() => {
     const fetchExchangeRates = async () => {
       try {
-        const res = await fetch(process.env.NEXT_PUBLIC_EXCHANGE_RATE_API);
-        const data = await res.json();
+        const response = await fetch(process.env.NEXT_PUBLIC_EXCHANGE_RATE_API);
+        const data = await response.json();
         setExchangeRates(data.conversion_rates);
       } catch (err) {
-        console.error("Failed to fetch exchange rates:", err);
+        console.error("Error fetching exchange rates:", err);
       }
     };
+
     fetchExchangeRates();
   }, []);
 
+  // Handle search filtering
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -66,6 +70,7 @@ export default function Page() {
     );
   };
 
+  // Handle sorting (both budget & duration)
   const handleSort = (option) => {
     setSortOption(option);
     let sortedTrips = [...filteredTrips];
@@ -98,15 +103,15 @@ export default function Page() {
   return (
     <div className="min-h-screen px-6 py-12 bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
+        
+        {/* Header + Search Bar + Combined Filter */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold">Community</h1>
           <p className="text-gray-600 mt-2">Discover exciting trips shared by the community.</p>
         </div>
 
-        {/* Search & Filters */}
         <div className="flex justify-end items-center gap-4 mt-8 mb-6 flex-wrap">
-          {/* Search */}
+          {/* Search Bar */}
           <div className="relative w-full sm:w-72">
             <svg
               className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-pink-500"
@@ -146,8 +151,8 @@ export default function Page() {
             <option value="longestToShortest">🗓 Duration: Longest to Shortest</option>
           </select>
 
-          {/* Currency Dropdown */}
-          <select
+           {/* Currency Dropdown */}
+           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
             className="px-4 py-2 border border-pink-300 rounded-full shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-white text-gray-700 cursor-pointer"
@@ -160,38 +165,40 @@ export default function Page() {
           </select>
         </div>
 
+
+
+
         {error && <p className="text-center text-red-500">{error}</p>}
         {loading ? <p className="text-center">Loading...</p> : null}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
           {filteredTrips.length > 0 ? (
+
             filteredTrips.map((trip) => (
-              <div
-                key={trip.tripId}
+              <div 
+                key={trip.tripId} 
                 className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
                 onClick={() => router.push(`/community/${trip.tripId}`)}
               >
-                <img
-                  src={trip.imageUrl || "/default_trip.png"}
-                  alt={trip.tripName}
-                  className="w-full h-[200px] object-cover rounded-t-lg"
-                />
-                <div className="p-4 flex flex-col justify-between h-full">
-                  <div>
-                    <h2 className="font-semibold text-lg">{trip.tripName}</h2>
-                    <p className="text-gray-500 text-sm">
-                      🗓 {trip.startDate.substring(0, 10).replaceAll("-", "/")} -{" "}
-                      {trip.endDate.substring(0, 10).replaceAll("-", "/")}
-                    </p>
-                    <p className="text-gray-600 font-semibold mt-1">
-                      💰{currency}{" "}
-                      ${Math.round(trip.totalCostEstimate * (exchangeRates[currency] || 1))}
-                    </p>
-                    <p className="text-gray-600 font-semibold mt-1">
-                      📍 {trip.city}, {trip.country}
-                    </p>
-                  </div>
+              <img
+                src={trip.imageUrl || "/default_trip.png"}
+                alt={trip.tripName}
+                className="w-full h-[200px] object-cover rounded-t-lg"
+              />
+              <div className="p-4 flex flex-col justify-between h-full">
+                <div>
+                  <h2 className="font-semibold text-lg">{trip.tripName}</h2>
+                  <p className="text-gray-500 text-sm">
+                    🗓 {trip.startDate.substring(0, 10).replaceAll('-', '/')} - {trip.endDate.substring(0, 10).replaceAll('-', '/')}
+                  </p>
+                  <p className="text-gray-600 font-semibold mt-1">
+                    💰 {currency} ${Math.round(trip.totalCostEstimate * (exchangeRates[currency] || 1))}
+                  </p>
+
+                  <p className="text-gray-600 font-semibold mt-1">📍 {trip.city}, {trip.country}</p>
                 </div>
+
+              </div>
               </div>
             ))
           ) : (
