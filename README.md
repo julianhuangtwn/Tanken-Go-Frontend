@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tanken-Go Frontend
 
-## Getting Started
+Tanken-Go is an AI-powered trip planning application that also fosters community engagement. This repository contains the **frontend** code of the application.
 
-First, run the development server:
+To use all features, please also set up the [Tanken-Go Backend](https://github.com/julianhuangtwn/Tanken-Go-Backend).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Installation Instructions
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Backend**  
+  Clone and run the backend from [here](https://github.com/julianhuangtwn/Tanken-Go-Backend).
 
-## Learn More
+- **API Keys**  
+  You’ll need to acquire API keys google maps API:
+  - [Google Maps API](https://developers.google.com/maps/documentation/javascript/get-api-key)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Starting Locally
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Ensure that the backend is running (backend link)
+2. Open VSCode
+3. Use the bash or command line and run the command<br>
+      ```git clone https://github.com/julianhuangtwn/Tanken-Go-Frontend.git```
+5. Run the command <br>
+`npm i`
+6. Create a `.env` file at the root of the project
+7. Copy and paste: <br>
+<pre><code>NEXT_PUBLIC_API_URL=localhost:8080 
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY= /*Google Maps API Key*/</code></pre>
+8. Run the command <br>
+`npm run dev`
+9. Visit localhost:3030
+### Deploying Online
+**Prerequisite** <br>
+Deploy backend on public before proceeding <br>
+**Instructions**
+1. Fork this repository
+2. Go to Render
+3. Sign in using github (SSO)
+4. Go to +Add new > Web Service
+5. Select the forked repository
+6. In the Environment Variables, include:
+<pre><code>NEXT_PUBLIC_API_URL = /*Deployed Backend Link*/
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = /*Google Maps API Key*/</code></pre>
 
-## Deploy on Vercel
+## Technical Document 
+**Tech Stack** <br>
+Our application uses nextjs for front-end, express js for backend and oracledb for database. Some of the other services we used are: <br>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**AI Pipeline**<br>
+Our main feature is to utilize AI to plan the trip for the user. The following diagram shows the flow of the requests. <br>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Database Tables**<br>
+
+## List of Deviation
+**Manual Trip Search**<br>
+In the proposed SRS, we included that the users could search specific trips and add them into the trip list. Instead, we have implemented AI to do the search and add the trip to the list for the user.<br><br>
+**AI Python**<br>
+Initially, use of Python was proposed in SRS, however, after reading the OpenAI API documentation, it was no longer a necessary tech stack.<br><br>
+**Website Design**<br>
+Due to change in plans for the manual search, we had to improvise the design as well. See Images below: <br><br>
+
+fig 1. Manual search prototype for editing trip<br><br>
+fig 2. edit trip page design<br><br>
+**Database Model** <br><br>
+According to the SRS document, AI Chat logs were kept in the database. Instead, we saved the final trip destination to save space on the database. The reason behind the change is because there is little to no impact on the user experience with the change, making our application simpler to use and implement.
+
+## Other information
+Our platform does not have a level of access (i.e. admin account), so feel free to create your own credential and test out our application.<br>
+If you wish to use a general account, please use the credentials below:<br>
+email: demotankengo@gmail.com<br>
+password: @Demo1234<br>
