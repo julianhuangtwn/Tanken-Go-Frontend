@@ -50,12 +50,12 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = /*Google Maps API Key*/</code></pre>
 ## Technical Document 
 **Tech Stack** <br>
 Our application uses nextjs for front-end, express js for backend and oracledb for database. Some of the other services we used are: <br>
-
+![Project Tech Stack Image](/Project_Artifact_Screenshots/tech_stack.png)<br>
 **AI Pipeline**<br>
 Our main feature is to utilize AI to plan the trip for the user. The following diagram shows the flow of the requests. <br>
-
+![AI Pipeline Image](/Project_Artifact_Screenshots/ai_pipeline.png) <br>
 **Database Tables**<br>
-
+![Database Entity Relation Diagram](/Project_Artifact_Screenshots/database_diagram.png)<br><br>
 ## List of Deviation
 **Manual Trip Search**<br>
 In the proposed SRS, we included that the users could search specific trips and add them into the trip list. Instead, we have implemented AI to do the search and add the trip to the list for the user.<br><br>
@@ -63,8 +63,9 @@ In the proposed SRS, we included that the users could search specific trips and 
 Initially, use of Python was proposed in SRS, however, after reading the OpenAI API documentation, it was no longer a necessary tech stack.<br><br>
 **Website Design**<br>
 Due to change in plans for the manual search, we had to improvise the design as well. See Images below: <br><br>
-
+![Prototype before](/Project_Artifact_Screenshots/prototype.png)<br>
 fig 1. Manual search prototype for editing trip<br><br>
+![Prototype after](/Project_Artifact_Screenshots/after.JPG)<br>
 fig 2. edit trip page design<br><br>
 **Database Model** <br><br>
 According to the SRS document, AI Chat logs were kept in the database. Instead, we saved the final trip destination to save space on the database. The reason behind the change is because there is little to no impact on the user experience with the change, making our application simpler to use and implement.
