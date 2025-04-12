@@ -14,8 +14,9 @@ To use all features, please also set up the [Tanken-Go Backend](https://github.c
   Clone and run the backend from [here](https://github.com/julianhuangtwn/Tanken-Go-Backend).
 
 - **API Keys**  
-  You’ll need to acquire API keys google maps API:
+  You’ll need to acquire API keys:
   - [Google Maps API](https://developers.google.com/maps/documentation/javascript/get-api-key)
+  - [Exchange Rate API](https://www.exchangerate-api.com/)
 
 ---
 
@@ -30,7 +31,9 @@ To use all features, please also set up the [Tanken-Go Backend](https://github.c
 6. Create a `.env` file at the root of the project
 7. Copy and paste: <br>
 <pre><code>NEXT_PUBLIC_API_URL=localhost:8080 
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY= /*Google Maps API Key*/</code></pre>
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY= /*Google Maps API Key*/
+NEXT_PUBLIC_EXCHANGE_RATE_API = /*Exchange Rate API Key*/
+</code></pre>
 8. Run the command <br>
 `npm run dev`
 9. Visit localhost:3030
@@ -45,7 +48,9 @@ Deploy backend on public before proceeding <br>
 5. Select the forked repository
 6. In the Environment Variables, include:
 <pre><code>NEXT_PUBLIC_API_URL = /*Deployed Backend Link*/
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = /*Google Maps API Key*/</code></pre>
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = /*Google Maps API Key*/
+NEXT_PUBLIC_EXCHANGE_RATE_API = /*Exchange Rate API Key*/
+</code></pre>
 
 ## Technical Document 
 **Tech Stack** <br>
