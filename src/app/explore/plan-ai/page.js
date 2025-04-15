@@ -8,8 +8,8 @@ import TripMap from "@/components/plan-ai/tripMap";
 import { LoadScript } from "@react-google-maps/api";
 import { aiTripAtom } from "@/lib/aiTripAtom";
 import { useAtom } from "jotai";
-import { useSearchParams } from 'next/navigation';
-import { getToken } from "@/lib/authenticate"
+import { useSearchParams } from "next/navigation";
+import { getToken } from "@/lib/authenticate";
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -21,22 +21,22 @@ export default function Page() {
   const messageAreaRef = useRef(null);
   const [token, setToken] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [containerHeight, setContainerHeight] = useState('calc(100vh - 64px)');
+  const [containerHeight, setContainerHeight] = useState("calc(100vh - 64px)");
 
   // Destinations Generated from AI
-  
+
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
 
-  // My Trip Generated from AI 
+  // My Trip Generated from AI
   const [myTrip, setMyTrip] = useState(null);
 
   const searchParams = useSearchParams();
-  const tripId = searchParams.get('tripId');
+  const tripId = searchParams.get("tripId");
 
   useEffect(() => {
     // Clear the aiTripAtom on first page load
     setAiTripAtom([]);
-    
+
     if (typeof window !== "undefined") {
       setToken(localStorage.getItem("token"));
     }
@@ -45,7 +45,7 @@ export default function Page() {
   // Dynamically calculate the navbar height to fit chatbox into viewport
   useEffect(() => {
     const updateHeight = () => {
-      const navbar = document.querySelector('nav'); // adjust selector to match your navbar
+      const navbar = document.querySelector("nav"); // adjust selector to match your navbar
       if (navbar) {
         const navbarHeight = navbar.offsetHeight;
         setContainerHeight(`calc(100vh - ${navbarHeight}px)`);
@@ -55,9 +55,9 @@ export default function Page() {
     // Initial calculation
     updateHeight();
 
-    window.addEventListener('resize', updateHeight);
-    return () => window.removeEventListener('resize', updateHeight);
-  })
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  });
 
   // For edit trip, the tripId will be passed in the url as a query (/explore/plan-ai?tripId=127)
   useEffect(() => {
@@ -65,18 +65,21 @@ export default function Page() {
       const fetchTripData = async () => {
         setLoading(true);
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/trips/public/${tripId}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${getToken()}`
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/v1/trips/public/${tripId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getToken()}`,
+              },
             }
-          });
+          );
 
           if (response.ok) {
             const data = await response.json();
             const tripData = data.data.data[0];
-            
+
             setMyTrip(tripData);
 
             // Restructure the fetched data JSON
@@ -84,51 +87,53 @@ export default function Page() {
               trip: {
                 tripName: tripData.tripName,
                 startDate: tripData.startDate,
-                endDate: tripData.endDate, 
+                endDate: tripData.endDate,
                 totalCostEstimate: tripData.totalCostEstimate,
-                isPublic: tripData.isPublic, 
-                destinations: []
+                isPublic: tripData.isPublic,
+                destinations: [],
               },
-              message: "How would you like to edit this trip? Here is the current trip: ",
-              isTripGenerated: true 
+              message:
+                "How would you like to edit this trip? Here is the current trip: ",
+              isTripGenerated: true,
             };
-        
+
             // Add destinations from tripData
-            tripData.destinationsByDay.forEach(destination => {
+            tripData.destinationsByDay.forEach((destination) => {
               cleanedTripResponse.trip.destinations.push({
                 name: destination.destinationName,
-                description: destination.description, 
+                description: destination.description,
                 city: destination.city,
                 country: destination.country,
                 coordinates: destination.coordinates,
                 category: destination.category,
-                visit_date: destination.visitDate
+                visit_date: destination.visitDate,
               });
             });
-            
 
             setAiTripAtom(() => {
-              cleanedTripResponse.trip.destinations.forEach((destination, index) => {
-                destination.id = index + 1;
-              });
+              cleanedTripResponse.trip.destinations.forEach(
+                (destination, index) => {
+                  destination.id = index + 1;
+                }
+              );
 
               console.log(cleanedTripResponse);
-    
-              return cleanedTripResponse.trip.destinations
+
+              return cleanedTripResponse.trip.destinations;
             });
 
-            // Return the cleaned-up response            
+            // Return the cleaned-up response
             const aiMessage = {
               id: messages.length + 1,
-              role: 'assistant',
+              role: "assistant",
               content: cleanedTripResponse, // Set fetched trip data as the assistant's message
             };
             setMessages([aiMessage]);
           } else {
-            console.error('Failed to fetch trip data');
+            console.error("Failed to fetch trip data");
           }
         } catch (error) {
-          console.error('Error fetching trip data:', error);
+          console.error("Error fetching trip data:", error);
         }
         setLoading(false);
       };
@@ -196,7 +201,8 @@ export default function Page() {
           });
 
           console.log("trip in map", data.trip.destinations);
-          return data.trip.destinations});
+          return data.trip.destinations;
+        });
       } else {
         console.error("Failed to fetch response from backend");
       }
@@ -228,9 +234,11 @@ export default function Page() {
     setMessages((prevMessages) => [...prevMessages, userMessage]);
   };
 
-
   return (
-    <div className="flex flex-row flex-grow" style={{ height: containerHeight }}>
+    <div
+      className="flex flex-row flex-grow"
+      style={{ height: containerHeight }}
+    >
       <div className=" p-4 w-1/2">
         <div className="flex flex-col h-full max-h-full rounded-lg bg-themePink">
           <div
@@ -348,8 +356,12 @@ export default function Page() {
       </div>
 
       {/* <LoadScript googleMapsApiKey={apiKey}> */}
-        <TripList setIsMapOpen={setIsMapOpen} myTrip={myTrip} />
-        {isMapOpen && <TripMap />}
+      <TripList setIsMapOpen={setIsMapOpen} myTrip={myTrip} />
+      {isMapOpen && (
+        <LoadScript googleMapsApiKey={apiKey}>
+          <TripMap />
+        </LoadScript>
+      )}
       {/* </LoadScript> */}
     </div>
   );

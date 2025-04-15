@@ -34,7 +34,6 @@ import { aiTripAtom } from "@/lib/aiTripAtom";
 // import number_29 from "../../../public/mapMarker/number_29.png";
 // import number_30 from "../../../public/mapMarker/number_30.png";
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 const MAP_MARKER_ICON = [
   "/mapMarker/number_1.png",
@@ -72,7 +71,6 @@ export default function TripMap() {
   const [aiTrip, setAiTripAtom] = useAtom(aiTripAtom);
   
 
-  console.log("trip in map",aiTrip)
   const center =
     aiTrip[0]?.latitude && aiTrip[0]?.longitude
       ? { 
@@ -82,7 +80,6 @@ export default function TripMap() {
       : { lat: 0, lng: 0 };
   return (
     <div>
-      <LoadScriptNext googleMapsApiKey={apiKey}>
         <GoogleMap
           mapContainerStyle={{ width: "30vw", height: "100vh" }}
           center={center}
@@ -112,8 +109,7 @@ export default function TripMap() {
             const long = parseFloat(aiTrip.longitude);
 
             if (isNaN(lat) || isNaN(long)) {
-              console.log("Invalid coordinates for trip:");
-              console.log(aiTrip);
+              console.log("Invalid coordinates for trip");
               return null;
             }
             return (
@@ -129,7 +125,6 @@ export default function TripMap() {
             );
           })}
         </GoogleMap>
-        </LoadScriptNext>
     </div>
   );
 }
